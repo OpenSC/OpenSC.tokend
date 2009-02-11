@@ -2,17 +2,13 @@
 {
 	08FB7793FE84155DC02AAC07 /* Project object */ = {
 		activeBuildConfigurationName = Deployment;
-		activeExecutable = 5B59A2110F4318AB003CD203 /* BELPIC */;
+		activeExecutable = 5B59A2600F4319FB003CD203 /* OpenSC */;
 		activeTarget = 52B2601F0BC5A864007E00F1 /* world */;
 		addToTargets = (
 			5B59A24A0F4319FB003CD203 /* OpenSC */,
 		);
 		codeSenseManager = 5B59A23C0F431936003CD203 /* Code sense */;
 		executables = (
-			5B59A2110F4318AB003CD203 /* BELPIC */,
-			5B59A2120F4318AB003CD203 /* CAC */,
-			5B59A2130F4318AB003CD203 /* MuscleCard */,
-			5B59A2140F4318AB003CD203 /* PIV */,
 			5B59A2600F4319FB003CD203 /* OpenSC */,
 		);
 		perUserDictionary = {
@@ -71,6 +67,12 @@
 			5B59A2640F431A68003CD203 /* PBXTextBookmark */ = 5B59A2640F431A68003CD203 /* PBXTextBookmark */;
 			5B59A2650F431A68003CD203 /* PBXTextBookmark */ = 5B59A2650F431A68003CD203 /* PBXTextBookmark */;
 			5B59A2660F431A68003CD203 /* PBXTextBookmark */ = 5B59A2660F431A68003CD203 /* PBXTextBookmark */;
+			5B59A2930F431F10003CD203 /* PBXTextBookmark */ = 5B59A2930F431F10003CD203 /* PBXTextBookmark */;
+			5B59A2970F431F41003CD203 /* PBXTextBookmark */ = 5B59A2970F431F41003CD203 /* PBXTextBookmark */;
+			5B59A29F0F431F69003CD203 /* PBXTextBookmark */ = 5B59A29F0F431F69003CD203 /* PBXTextBookmark */;
+			5B59A2A00F431F69003CD203 /* PBXBookmark */ = 5B59A2A00F431F69003CD203 /* PBXBookmark */;
+			5B59A2A10F431F69003CD203 /* PBXTextBookmark */ = 5B59A2A10F431F69003CD203 /* PBXTextBookmark */;
+			5B59A2A20F431F69003CD203 /* PlistBookmark */ = 5B59A2A20F431F69003CD203 /* PlistBookmark */;
 		};
 		sourceControlManager = 5B59A23B0F431936003CD203 /* Source Control */;
 		userBuildSettings = {
@@ -84,6 +86,12 @@
 		};
 	};
 	4C86D3A0070B4122006A0C7F /* belpic.cpp */ = {
+		isa = PBXFileReference;
+		fileEncoding = 30;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		name = belpic.cpp;
+		path = "/Users/martin/uus/Tokend-35209/BELPIC/belpic.cpp";
+		sourceTree = "<absolute>";
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {519, 448}}";
 			sepNavSelRange = "{0, 0}";
@@ -98,122 +106,6 @@
 	};
 	52B2604B0BC5A864007E00F1 /* tokend */ = {
 		activeExec = 0;
-	};
-	52B260640BC5A864007E00F1 /* BELPIC */ = {
-		activeExec = 0;
-		executables = (
-			5B59A2110F4318AB003CD203 /* BELPIC */,
-		);
-	};
-	52B2607D0BC5A864007E00F1 /* CAC */ = {
-		activeExec = 0;
-		executables = (
-			5B59A2120F4318AB003CD203 /* CAC */,
-		);
-	};
-	52B260980BC5A864007E00F1 /* MuscleCard */ = {
-		activeExec = 0;
-		executables = (
-			5B59A2130F4318AB003CD203 /* MuscleCard */,
-		);
-	};
-	52B260BA0BC5A864007E00F1 /* PIV */ = {
-		activeExec = 0;
-		executables = (
-			5B59A2140F4318AB003CD203 /* PIV */,
-		);
-	};
-	5B59A2110F4318AB003CD203 /* BELPIC */ = {
-		isa = PBXExecutable;
-		activeArgIndices = (
-		);
-		argumentStrings = (
-		);
-		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
-		configStateDict = {
-		};
-		customDataFormattersEnabled = 1;
-		debuggerPlugin = GDBDebugging;
-		disassemblyDisplayState = 0;
-		enableDebugStr = 1;
-		environmentEntries = (
-		);
-		executableSystemSymbolLevel = 0;
-		executableUserSymbolLevel = 0;
-		libgmallocEnabled = 0;
-		name = BELPIC;
-		sourceDirectories = (
-		);
-	};
-	5B59A2120F4318AB003CD203 /* CAC */ = {
-		isa = PBXExecutable;
-		activeArgIndices = (
-		);
-		argumentStrings = (
-		);
-		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
-		configStateDict = {
-		};
-		customDataFormattersEnabled = 1;
-		debuggerPlugin = GDBDebugging;
-		disassemblyDisplayState = 0;
-		enableDebugStr = 1;
-		environmentEntries = (
-		);
-		executableSystemSymbolLevel = 0;
-		executableUserSymbolLevel = 0;
-		libgmallocEnabled = 0;
-		name = CAC;
-		sourceDirectories = (
-		);
-	};
-	5B59A2130F4318AB003CD203 /* MuscleCard */ = {
-		isa = PBXExecutable;
-		activeArgIndices = (
-		);
-		argumentStrings = (
-		);
-		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
-		configStateDict = {
-		};
-		customDataFormattersEnabled = 1;
-		debuggerPlugin = GDBDebugging;
-		disassemblyDisplayState = 0;
-		enableDebugStr = 1;
-		environmentEntries = (
-		);
-		executableSystemSymbolLevel = 0;
-		executableUserSymbolLevel = 0;
-		libgmallocEnabled = 0;
-		name = MuscleCard;
-		sourceDirectories = (
-		);
-	};
-	5B59A2140F4318AB003CD203 /* PIV */ = {
-		isa = PBXExecutable;
-		activeArgIndices = (
-		);
-		argumentStrings = (
-		);
-		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
-		configStateDict = {
-		};
-		customDataFormattersEnabled = 1;
-		debuggerPlugin = GDBDebugging;
-		disassemblyDisplayState = 0;
-		enableDebugStr = 1;
-		environmentEntries = (
-		);
-		executableSystemSymbolLevel = 0;
-		executableUserSymbolLevel = 0;
-		libgmallocEnabled = 0;
-		name = PIV;
-		sourceDirectories = (
-		);
 	};
 	5B59A23B0F431936003CD203 /* Source Control */ = {
 		isa = PBXSourceControlManager;
@@ -322,5 +214,60 @@
 		rType = 0;
 		vrLen = 959;
 		vrLoc = 0;
+	};
+	5B59A2930F431F10003CD203 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4C134A9006DBF81800FA17D9 /* Token.cpp */;
+		name = "Token.cpp: 695";
+		rLen = 45;
+		rLoc = 19340;
+		rType = 0;
+		vrLen = 297;
+		vrLoc = 19004;
+	};
+	5B59A2970F431F41003CD203 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4C134A9006DBF81800FA17D9 /* Token.cpp */;
+		name = "Token.cpp: 695";
+		rLen = 45;
+		rLoc = 19340;
+		rType = 0;
+		vrLen = 297;
+		vrLoc = 19004;
+	};
+	5B59A29F0F431F69003CD203 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4C134A9006DBF81800FA17D9 /* Token.cpp */;
+		name = "Token.cpp: 695";
+		rLen = 45;
+		rLoc = 19340;
+		rType = 0;
+		vrLen = 390;
+		vrLoc = 19098;
+	};
+	5B59A2A00F431F69003CD203 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 5B59A2680F431A9E003CD203 /* Info.plist */;
+	};
+	5B59A2A10F431F69003CD203 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 4C134A9006DBF81800FA17D9 /* Token.cpp */;
+		name = "Token.cpp: 695";
+		rLen = 45;
+		rLoc = 19340;
+		rType = 0;
+		vrLen = 390;
+		vrLoc = 19098;
+	};
+	5B59A2A20F431F69003CD203 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 5B59A2680F431A9E003CD203 /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = "/Users/martin/uus/Tokend-35209/OpenSC/Info.plist";
+		rLen = 0;
+		rLoc = 2147483647;
 	};
 }

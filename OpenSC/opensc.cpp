@@ -26,7 +26,7 @@
  */
 
 /*
- * This code is based on the BELPIC tokend distributed by Apple with Tiger.
+ * This code is based on the BELPIC tokend distributed by Apple.
  * Adapted for use with an Aladdin eToken Pro populated with OpenSC (PKCS#15)
  * by Ron DiNapoli, Cornell University (rd29@cornell.edu)
  * Update: should now work with all OpenSC cards.
