@@ -13,5 +13,4 @@ void otdLogHex(const char *msg, const unsigned char *buf, size_t len);
 #define otdLogErr(msg, err) otdLogErrWhere(msg, err, __FILE__, __LINE__)
 
 void otdLogErrWhere(const char *msg, int err, const char *where, int line);
-
 #endif
