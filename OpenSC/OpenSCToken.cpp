@@ -259,16 +259,23 @@ uint32 OpenSCToken::probe(SecTokendProbeFlags flags,
 	otdLog("  tokend_establish_context(): %d\n", r);
 	if (r == 0) {
 		// Which reader to use
-		int idx;
+		unsigned int idx;
+		sc_reader_t *reader = NULL;
+
 		const SCARD_READERSTATE &readerState = *(*startupReaderInfo)();
-		for (idx = 0; idx < mScCtx->reader_count; idx++) {
-			if (strcmp(readerState.szReader, mScCtx->reader[idx]->name) == 0)
-				break;
+		for (idx = 0; idx < sc_ctx_get_reader_count(mScCtx); idx++) {
+
+		        reader = sc_ctx_get_reader(mScCtx, idx);
+		        if (!reader)
+					return 0;
+
+		        if (strcmp(readerState.szReader, reader->name) == 0)
+					break;
 		}
 
 		// Connect to the card
-		if (idx < mScCtx->reader_count) {
-			r = sc_connect_card(mScCtx->reader[idx], 0, &mScCard);
+		if (idx < sc_ctx_get_reader_count(mScCtx)) {
+			r = sc_connect_card(reader, 0, &mScCard);
 			otdLog("  sc_connect_card(): %d\n", r);
 			if (r < 0) {
 				sc_release_context(mScCtx);
@@ -281,13 +288,11 @@ uint32 OpenSCToken::probe(SecTokendProbeFlags flags,
 					// get the score
 					scconf_block *conf_block = NULL;
 					conf_block = sc_get_conf_block(mScCtx, "framework", "tokend", 1);
+					score = 50;
 					if (conf_block != NULL) {
-						score = scconf_get_int(conf_block, "score", 50);
+						score = scconf_get_int(conf_block, "score", score);
 						otdLog("  Get Score from config file: %d\n", score);
-					} else {
-						score = 50;
-						otdLog("  Default Score: %d\n", score);
-					}
+					} 
 					
 					// Create a tokenUid
 					if (mScP15Card->label != NULL)
