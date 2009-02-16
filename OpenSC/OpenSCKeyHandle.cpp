@@ -69,7 +69,8 @@ uint32 inputSize, bool encrypting)
 void OpenSCKeyHandle::generateSignature(const Context &context,
 CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 {
-    unsigned int flags = 0;                       // for sc_pkcs15_compute_signature()
+    // for sc_pkcs15_compute_signature()
+    unsigned int flags = 0;
 
     otdLog("In OpenSCKeyHandle::generateSignature()\n");
 
@@ -120,7 +121,7 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
         CssmError::throwMe(CSSMERR_CSP_INVALID_DIGEST_ALGORITHM);
     }
 
-// Get padding, but default to pkcs1 style padding
+    // Get padding, but default to pkcs1 style padding
     uint32 padding = CSSM_PADDING_PKCS1;
     context.getInt(CSSM_ATTRIBUTE_PADDING, padding);
 
@@ -140,13 +141,13 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
     }
 
     size_t keyLength = (mKey.sizeInBits() + 7) / 8;
-// @@@ Switch to using tokend allocators
+    // @@@ Switch to using tokend allocators
     unsigned char *outputData =
         reinterpret_cast<unsigned char *>(malloc(keyLength));
     if (outputData == NULL)
         CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
 
-// Call OpenSC to do the actual signing
+    // Call OpenSC to do the actual signing
     int rv = sc_pkcs15_compute_signature(mToken.mScP15Card,
         mKey.object(), flags, input.Data, input.Length, outputData, keyLength);
     if (rv == SC_ERROR_SECURITY_STATUS_NOT_SATISFIED)
@@ -230,13 +231,13 @@ const CssmData &cipher, CssmData &clear)
     if (context.algorithm() != CSSM_ALGID_RSA)
         CssmError::throwMe(CSSMERR_CSP_INVALID_ALGORITHM);
 
-// @@@ Switch to using tokend allocators
+    // @@@ Switch to using tokend allocators
     unsigned char *outputData =
         reinterpret_cast<unsigned char *>(malloc(cipher.Length));
     if (outputData == NULL)
         CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
 
-// Call OpenSC to do the actual decryption
+    // Call OpenSC to do the actual decryption
     int rv = sc_pkcs15_decipher(mToken.mScP15Card,
         mKey.object(), SC_ALGORITHM_RSA_PAD_PKCS1,
         cipher.Data, cipher.Length, outputData, cipher.Length);

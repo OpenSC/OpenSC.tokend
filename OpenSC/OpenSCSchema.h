@@ -65,4 +65,5 @@ class OpenSCSchema : public Tokend::Schema
 
         OpenSCKeyHandleFactory mOpenSCKeyHandleFactory;
 };
-#endif                                            /* !_OpenSCSCHEMA_H_ */
+/* !_OpenSCSCHEMA_H_ */
+#endif

@@ -53,7 +53,7 @@ OpenSCToken::~OpenSCToken()
 {
     delete mSchema;
 
-// Clean pin cache
+    // Clean pin cache
     map<sc_pkcs15_pin_info_t *, pin_t>::iterator it;
     for (it = mPinCache.begin(); it != mPinCache.end(); it++)
         memset(it->second.value, 0, SC_MAX_PIN_SIZE);
@@ -104,7 +104,7 @@ const unsigned char *newPin, size_t newPinLength )
     int r, i, rv;
     struct sc_pkcs15_object *objs[32];
 
-// pinNum -> AuthID
+    // pinNum -> AuthID
     const sc_pkcs15_id_t *auth_id = getIdFromPinMap(pinNum);
     if (auth_id == NULL)
     {
@@ -112,7 +112,7 @@ const unsigned char *newPin, size_t newPinLength )
         CssmError::throwMe(CSSM_ERRCODE_INVALID_DATA);
     }
 
-// AuthID -> pin object  +  change pin
+    // AuthID -> pin object  +  change pin
     r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_AUTH_PIN, objs, 32);
     otdLog("  sc_pkcs15_get_objects(pin_id=%s): %d\n", sc_pkcs15_print_id(auth_id),  r);
     if (r >= 0)
@@ -168,8 +168,8 @@ void OpenSCToken::verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
         CssmError::throwMe(CSSM_ERRCODE_OPERATION_AUTH_DENIED);
     }
 
-// Start a new transaction which we never get rid of until someone calls
-// unverifyPIN()
+    // Start a new transaction which we never get rid of until someone calls
+    // unverifyPIN()
 }
 
 
@@ -180,7 +180,7 @@ bool OpenSCToken::_verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
     int r, i, rv;
     struct sc_pkcs15_object *objs[32];
 
-// pinNum -> AuthID
+    // pinNum -> AuthID
     const sc_pkcs15_id_t *auth_id = getIdFromPinMap(pinNum);
     if (auth_id == NULL)
     {
@@ -188,7 +188,7 @@ bool OpenSCToken::_verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
         CssmError::throwMe(CSSM_ERRCODE_INVALID_DATA);
     }
 
-// AuthID -> pin object  +  verify pin
+    // AuthID -> pin object  +  verify pin
     r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_AUTH_PIN, objs, 32);
     otdLog("  sc_pkcs15_get_objects(pin_id=%s): %d\n", sc_pkcs15_print_id(auth_id),  r);
     if (r >= 0)
@@ -218,7 +218,7 @@ int OpenSCToken::verifyCachedPIN(const sc_pkcs15_id *authID)
 {
     map<sc_pkcs15_pin_info_t *, pin_t>::iterator it;
 
-// Look up the cached PIN + verify
+    // Look up the cached PIN + verify
     for (it = mPinCache.begin(); it != mPinCache.end(); it++)
     {
         if (sc_pkcs15_compare_id(authID, &it->first->auth_id))
@@ -254,7 +254,7 @@ const unsigned char *pin, size_t pinLength)
         }
     }
 
-// Pin not yet cached -> make a new entry
+    // Pin not yet cached -> make a new entry
     mPinCache.insert(make_pair(pin_info, pinval));
 }
 
@@ -280,14 +280,14 @@ char tokenUid[TOKEND_MAX_UID])
 
     uint32 score = Tokend::ISO7816Token::probe(flags, tokenUid);
 
-// FIXME bool doDisconnect = true; /*!(flags & kSecTokendProbeKeepToken); */
+    // FIXME bool doDisconnect = true; /*!(flags & kSecTokendProbeKeepToken); */
 
-// Init OpenSC
+    // Init OpenSC
     int r = sc_establish_context(&mScCtx, "tokend");
     otdLog("  tokend_establish_context(): %d\n", r);
     if (r == 0)
     {
-// Which reader to use
+        // Which reader to use
         unsigned int idx;
         sc_reader_t *reader = NULL;
 
@@ -303,7 +303,7 @@ char tokenUid[TOKEND_MAX_UID])
                 break;
         }
 
-// Connect to the card
+        // Connect to the card
         if (idx < sc_ctx_get_reader_count(mScCtx))
         {
             r = sc_connect_card(reader, 0, &mScCard);
@@ -320,7 +320,7 @@ char tokenUid[TOKEND_MAX_UID])
                 otdLog("  sc_pkcs15_bind(): %d\n", r);
                 if (r == 0)
                 {
-// get the score
+                    // get the score
                     scconf_block *conf_block = NULL;
                     conf_block = sc_get_conf_block(mScCtx, "framework", "tokend", 1);
                     score = 50;
@@ -330,7 +330,7 @@ char tokenUid[TOKEND_MAX_UID])
                         otdLog("  Get Score from config file: %d\n", score);
                     }
 
-// Create a tokenUid
+                    // Create a tokenUid
                     if (mScP15Card->label != NULL)
                         strlcpy(tokenUid, mScP15Card->label, TOKEND_MAX_UID);
                     if (mScP15Card->serial_number != NULL)
@@ -385,7 +385,7 @@ char printName[PATH_MAX])
 void OpenSCToken::getOwner(AclOwnerPrototype &owner)
 {
     otdLog("In OpenSCToken::getOwner()\n");
-// we don't really know (right now), so claim we're owned by PIN #1
+    // we don't really know (right now), so claim we're owned by PIN #1
     if (!mAclOwner)
     {
         mAclOwner.allocator(Allocator::standard());
@@ -399,22 +399,22 @@ void OpenSCToken::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls)
 {
     otdLog("In OpenSCToken::getAcl()\n");
 
-// get pin list, then for each pin in the future
+    // get pin list, then for each pin in the future
     if (!mAclEntries)
     {
         mAclEntries.allocator(Allocator::standard());
-// Anyone can read the attributes and data of any record on this token
-// (it's further limited by the object itself).
+        // Anyone can read the attributes and data of any record on this token
+        // (it's further limited by the object itself).
         mAclEntries.add(CssmClient::AclFactory::AnySubject(
             mAclEntries.allocator()),
             AclAuthorizationSet(CSSM_ACL_AUTHORIZATION_DB_READ, 0));
 
-//mAclEntries.addPin(AclFactory::PWSubject(mAclEntries.allocator()), 1);
-//mAclEntries.addPin(AclFactory::PromptPWSubject(mAclEntries.allocator(), CssmData()), 1);
-// We support PIN1 with either a passed in password
-// subject or a prompted password subject.
+        //mAclEntries.addPin(AclFactory::PWSubject(mAclEntries.allocator()), 1);
+        //mAclEntries.addPin(AclFactory::PromptPWSubject(mAclEntries.allocator(), CssmData()), 1);
+        // We support PIN1 with either a passed in password
+        // subject or a prompted password subject.
         mAclEntries.addPin(AclFactory::PWSubject(mAclEntries.allocator()), 1);
-//mAclEntries.addPin(AclFactory::PWSubject(mAclEntries.allocator()), 2);
+        //mAclEntries.addPin(AclFactory::PWSubject(mAclEntries.allocator()), 2);
         mAclEntries.addPin(AclFactory::PromptPWSubject(mAclEntries.allocator(), CssmData()), 1);
         mAclEntries.addPin(AclFactory::PinSubject(mAclEntries.allocator(), CssmData()), 1);
     }
@@ -426,7 +426,8 @@ void OpenSCToken::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls)
 void  OpenSCToken::addToPinMap(const sc_pkcs15_id_t *id)
 {
     if (getRefFromPinMap(id) != -1)
-        return;                                   // already added
+        // already added
+        return;
 
     mPinMap.insert(make_pair(mPinCount++, id));
 }
@@ -441,7 +442,8 @@ int OpenSCToken::getRefFromPinMap(const sc_pkcs15_id_t *id)
         if (sc_pkcs15_compare_id(id, it->second))
             return it->first;
     }
-    return -1;                                    // id not found
+    // id not found
+    return -1;
 }
 
 
@@ -454,7 +456,8 @@ const sc_pkcs15_id_t * OpenSCToken::getIdFromPinMap(int pinNum)
         if (pinNum == it->first)
             return it->second;
     }
-    return NULL;                                  // pinNum not found
+    // pinNum not found
+    return NULL;
 }
 
 
@@ -464,20 +467,20 @@ void OpenSCToken::populate()
 {
     otdLog("In OpenSCToken::populate()\n");
 
-// We work with certificates and private keys only
+    // We work with certificates and private keys only
     Tokend::Relation &certRelation = mSchema->findRelation(CSSM_DL_DB_RECORD_X509_CERTIFICATE);
     Tokend::Relation &privateKeyRelation = mSchema->findRelation(CSSM_DL_DB_RECORD_PRIVATE_KEY);
-//Tokend::Relation &dataRelation = mSchema->findRelation(CSSM_DL_DB_RECORD_GENERIC);
+    //Tokend::Relation &dataRelation = mSchema->findRelation(CSSM_DL_DB_RECORD_GENERIC);
 
     int r, i;
     struct sc_pkcs15_object *objs[32];
 
-// Map from ID to certs.
+    // Map from ID to certs.
     typedef std::map<sc_pkcs15_id_t *, RefPointer<Tokend::Record> > IdRecordMap;
     IdRecordMap mCertificates;
 
-// Locate certificates
-                                                  //FIXME - max objects constant ?
+    // Locate certificates
+    //FIXME - max objects constant ?
     r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_CERT_X509, objs, 32);
     otdLog("  sc_pkcs15_get_objects(TYPE_CERT_X509): %d\n", r);
     if (r >= 0)
@@ -485,18 +488,18 @@ void OpenSCToken::populate()
         for (i = 0; i < r; i++)
         {
             struct sc_pkcs15_cert_info *cert_info = (struct sc_pkcs15_cert_info *) objs[i]->data;
-//  get the actual record
+            //  get the actual record
             RefPointer<Tokend::Record> record(new OpenSCCertificateRecord(objs[i]));
-// put it into certificates map
+            // put it into certificates map
             otdLog("    - %s (ID=%s)\n", objs[i]->label, sc_pkcs15_print_id(&cert_info->id));
-// put into map
+            // put into map
             mCertificates.insert(std::pair<sc_pkcs15_id_t *, RefPointer<Tokend::Record> >(&cert_info->id, record));
-// mark as certificate
+            // mark as certificate
             certRelation.insertRecord(record);
         }
     }
 
-// Locate private keys
+    // Locate private keys
     r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_PRKEY_RSA, objs, 32);
     otdLog("  sc_pkcs15_get_objects(TYPE_PRKEY_RSA): %d\n", r);
     if (r >= 0)
@@ -506,11 +509,11 @@ void OpenSCToken::populate()
             sc_pkcs15_prkey_info_t *prkey_info = (sc_pkcs15_prkey_info_t *) objs[i]->data;
             RefPointer<Tokend::Record> record(
                 new OpenSCKeyRecord(this, objs[i], privateKeyRelation.metaRecord()));
-// put it into prkey map
+            // put it into prkey map
             otdLog("    - %s (ID=%s)\n", objs[i]->label, sc_pkcs15_print_id(&prkey_info->id));
             privateKeyRelation.insertRecord(record);
 
-// do the bind between the key and a cert
+            // do the bind between the key and a cert
             IdRecordMap::const_iterator it;
             for (it = mCertificates.begin(); it != mCertificates.end(); it++)
             {
@@ -529,9 +532,9 @@ void OpenSCToken::populate()
         }
     }
 
-// Get the PIN(s) and put their ID in the mPinMap. This way we get
-// a unique int as a reference to each PIN (ID), this has to be
-// returned in the OpenSCKeyRecord::getAcl() method.
+    // Get the PIN(s) and put their ID in the mPinMap. This way we get
+    // a unique int as a reference to each PIN (ID), this has to be
+    // returned in the OpenSCKeyRecord::getAcl() method.
     r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_AUTH_PIN, objs, 32);
     otdLog("  sc_pkcs15_get_objects(TYPE_AUTH_PIN): %d\n", r);
     for (i = 0; i < r; i++)

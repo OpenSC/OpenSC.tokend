@@ -78,4 +78,5 @@ class OpenSCKeyRecord : public OpenSCRecord
         AutoAclOwnerPrototype mAclOwner;
         AutoAclEntryInfoList mAclEntries;
 };
-#endif                                            /* !_OpenSCRECORD_H_ */
+/* !_OpenSCRECORD_H_ */
+#endif

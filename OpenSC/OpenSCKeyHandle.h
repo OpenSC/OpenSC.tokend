@@ -82,4 +82,5 @@ class OpenSCKeyHandleFactory : public Tokend::KeyHandleFactory
         virtual Tokend::KeyHandle *keyHandle(Tokend::TokenContext *tokenContext,
             const Tokend::MetaRecord &metaRecord, Tokend::Record &record) const;
 };
-#endif                                            /* !_OpenSCKEYHANDLE_H_ */
+/* !_OpenSCKEYHANDLE_H_ */
+#endif

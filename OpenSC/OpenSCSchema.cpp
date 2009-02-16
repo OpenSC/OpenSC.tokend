@@ -58,19 +58,19 @@ Tokend::Relation *OpenSCSchema::createKeyRelation(CSSM_DB_RECORDTYPE keyType)
 {
     Relation *rn = createStandardRelation(keyType);
 
-// Set up coders for key records.
+    // Set up coders for key records.
     MetaRecord &mr = rn->metaRecord();
     mr.keyHandleFactory(&mOpenSCKeyHandleFactory);
 
-// Print name of a key might as well be the key name.
+    // Print name of a key might as well be the key name.
     mr.attributeCoder(kSecKeyPrintName, &mDescriptionCoder);
 
-// Other key valuess
+    // Other key valuess
     mr.attributeCoder(kSecKeyKeyType, &mKeyAlgorithmCoder);
     mr.attributeCoder(kSecKeyKeySizeInBits, &mKeySizeCoder);
     mr.attributeCoder(kSecKeyEffectiveKeySize, &mKeySizeCoder);
 
-// Key attributes
+    // Key attributes
     mr.attributeCoder(kSecKeyExtractable, &mFalseCoder);
     mr.attributeCoder(kSecKeySensitive, &mTrueCoder);
     mr.attributeCoder(kSecKeyModifiable, &mFalseCoder);
@@ -78,7 +78,7 @@ Tokend::Relation *OpenSCSchema::createKeyRelation(CSSM_DB_RECORDTYPE keyType)
     mr.attributeCoder(kSecKeyNeverExtractable, &mTrueCoder);
     mr.attributeCoder(kSecKeyAlwaysSensitive, &mTrueCoder);
 
-// Key usage
+    // Key usage
     mr.attributeCoder(kSecKeyEncrypt, &mFalseCoder);
     mr.attributeCoder(kSecKeyWrap, &mFalseCoder);
     mr.attributeCoder(kSecKeyVerify, &mFalseCoder);

@@ -50,4 +50,5 @@ class OpenSCError : public Tokend::SCardError
     protected:
         IFDEBUG(void debugDiagnose(const void *id) const;)
 };
-#endif                                            /* !_OpenSCERROR_H_ */
+/* !_OpenSCERROR_H_ */
+#endif

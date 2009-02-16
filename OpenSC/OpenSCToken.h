@@ -70,14 +70,14 @@ class OpenSCToken : public Tokend::ISO7816Token
             const unsigned char *pin, size_t pinLength);
 
         virtual bool isLocked();
-//virtual void authenticate(CSSM_DB_ACCESS_TYPE mode, const AccessCredentials *cred);
+        //virtual void authenticate(CSSM_DB_ACCESS_TYPE mode, const AccessCredentials *cred);
         bool _verifyPIN(int pinNum, const unsigned char *pin, size_t pinLength);
 
         bool OpenSCToken:: _changePIN( int pinNum,
             const unsigned char *oldPin, size_t oldPinLength,
             const unsigned char *newPin, size_t newPinLength );
 
-// To manipulate mPinMap
+        // To manipulate mPinMap
         void addToPinMap(const sc_pkcs15_id_t *id);
         int getRefFromPinMap(const sc_pkcs15_id_t *id);
         const sc_pkcs15_id_t * getIdFromPinMap(int pinNum);
@@ -89,7 +89,7 @@ class OpenSCToken : public Tokend::ISO7816Token
 
     private:
         void populate();
-// temporary ACL cache hack - to be removed
+        // temporary ACL cache hack - to be removed
         AutoAclOwnerPrototype mAclOwner;
         AutoAclEntryInfoList mAclEntries;
         bool mLocked;
@@ -106,4 +106,5 @@ class OpenSCToken : public Tokend::ISO7816Token
 };
 
 //extern const unsigned char kMF_OpenSC[];
-#endif                                            /* !_OpenSCTOKEN_H_ */
+/* !_OpenSCTOKEN_H_ */
+#endif

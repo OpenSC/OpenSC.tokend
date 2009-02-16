@@ -57,4 +57,7 @@ void OpenSCError::debugDiagnose(const void *id) const
     secdebug("exception", "%p OpenSCError %s (%04hX)",
         id, errorstr(statusWord), statusWord);
 }
-#endif                                            //NDEBUG
+
+
+//NDEBUG
+#endif
