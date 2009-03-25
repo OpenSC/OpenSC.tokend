@@ -329,7 +329,6 @@ char tokenUid[TOKEND_MAX_UID])
                         score = scconf_get_int(conf_block, "score", score);
                         otdLog("  Get Score from config file: %d\n", score);
                     }
-
                     // Create a tokenUid
                     if (mScP15Card->label != NULL)
                         strlcpy(tokenUid, mScP15Card->label, TOKEND_MAX_UID);
@@ -485,6 +484,7 @@ void OpenSCToken::populate()
     otdLog("  sc_pkcs15_get_objects(TYPE_CERT_X509): %d\n", r);
     if (r >= 0)
     {
+        r = 1;                                    // Apple can really handle only a single certificate and PIN
         for (i = 0; i < r; i++)
         {
             struct sc_pkcs15_cert_info *cert_info = (struct sc_pkcs15_cert_info *) objs[i]->data;
@@ -504,6 +504,7 @@ void OpenSCToken::populate()
     otdLog("  sc_pkcs15_get_objects(TYPE_PRKEY_RSA): %d\n", r);
     if (r >= 0)
     {
+        r = 1;                                    // Apple can really handle only a single certificate and PIN
         for (i = 0; i < r; i++)
         {
             sc_pkcs15_prkey_info_t *prkey_info = (sc_pkcs15_prkey_info_t *) objs[i]->data;
@@ -537,20 +538,21 @@ void OpenSCToken::populate()
     // returned in the OpenSCKeyRecord::getAcl() method.
     r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_AUTH_PIN, objs, 32);
     otdLog("  sc_pkcs15_get_objects(TYPE_AUTH_PIN): %d\n", r);
-    for (i = 0; i < r; i++)
+    if (r>0)
     {
-        sc_pkcs15_pin_info *pin_info = (sc_pkcs15_pin_info *) objs[i]->data;
-        if ((pin_info->flags & SC_PKCS15_PIN_FLAG_SO_PIN) ||
-            (pin_info->flags & SC_PKCS15_PIN_FLAG_UNBLOCKING_PIN))
+        r = 1;                                    // Apple can really handle only a single certificate and PIN
+        for (i = 0; i < r; i++)
         {
-            otdLog("    ignored non-user pin with ID=%s\n",
-                sc_pkcs15_print_id(&pin_info->auth_id));
-            continue;
+            sc_pkcs15_pin_info *pin_info = (sc_pkcs15_pin_info *) objs[i]->data;
+            if ((pin_info->flags & SC_PKCS15_PIN_FLAG_SO_PIN) ||
+                (pin_info->flags & SC_PKCS15_PIN_FLAG_UNBLOCKING_PIN))
+            {
+                otdLog("    ignored non-user pin with ID=%s\n", sc_pkcs15_print_id(&pin_info->auth_id));
+                continue;
+            }
+            addToPinMap(&pin_info->auth_id);
+            otdLog("    added pin with ID=%s to the pinmap\n", sc_pkcs15_print_id(&pin_info->auth_id));
         }
-        addToPinMap(&pin_info->auth_id);
-        otdLog("    added pin with ID=%s to the pinmap\n",
-            sc_pkcs15_print_id(&pin_info->auth_id));
     }
-
     otdLog("  returning from OpenSCToken::populate()\n");
 }
