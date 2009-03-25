@@ -741,7 +741,6 @@
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = "/Users/martin/uus/Tokend-35209/BELPIC/Info copy.plist";
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Security/tokend";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -793,7 +792,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = /Library/OpenSC/include;
-				INFOPLIST_FILE = "/Users/martin/uus/Tokend-35209/OpenSC/Info.plist";
+				INFOPLIST_FILE = OpenSC/Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Security/tokend";
 				LIBRARY_SEARCH_PATHS = /Library/OpenSC/lib;
 				OPT_CPPXFLAGS = "$(OPT_CXFLAGS) -fno-enforce-eh-specs -fno-implement-inlines";
