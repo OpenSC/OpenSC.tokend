@@ -52,11 +52,6 @@ OpenSCToken::OpenSCToken() : mLocked(false)
 OpenSCToken::~OpenSCToken()
 {
     delete mSchema;
-
-    // Clean pin cache
-    map<sc_pkcs15_pin_info_t *, pin_t>::iterator it;
-    for (it = mPinCache.begin(); it != mPinCache.end(); it++)
-        memset(it->second.value, 0, SC_MAX_PIN_SIZE);
 }
 
 
@@ -126,10 +121,7 @@ const unsigned char *newPin, size_t newPinLength )
                 rv = sc_pkcs15_change_pin( mScP15Card, pin_info, oldPin, oldPinLength, newPin, newPinLength );
                 otdLog("  In OpenSCToken::sc_pkcs15_change_pin returned %d for pin %d\n", rv, pinNum );
                 if (rv==0)
-                {
-                    cachePIN(pin_info, newPin, newPinLength);
                     return true;
-                }
                 else
                     return false;
             }
@@ -201,10 +193,7 @@ bool OpenSCToken::_verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
                 rv = sc_pkcs15_verify_pin(mScP15Card, pin_info, pin,pinLength);
                 otdLog("  In OpenSCToken::verify returned %d for pin %d\n", rv, pinNum);
                 if (rv==0)
-                {
-                    cachePIN(pin_info, pin, pinLength);
                     return true;
-                }
                 else
                     return false;
             }
@@ -212,52 +201,6 @@ bool OpenSCToken::_verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
     }
     return false;
 }
-
-
-int OpenSCToken::verifyCachedPIN(const sc_pkcs15_id *authID)
-{
-    map<sc_pkcs15_pin_info_t *, pin_t>::iterator it;
-
-    // Look up the cached PIN + verify
-    for (it = mPinCache.begin(); it != mPinCache.end(); it++)
-    {
-        if (sc_pkcs15_compare_id(authID, &it->first->auth_id))
-        {
-            const pin_t *pinval = &it->second;
-            int rv = sc_pkcs15_verify_pin(mScP15Card, it->first,
-                pinval->value, pinval->len);
-            otdLog("  OpenSCToken::verifyCachedPin(): r = %d\n", rv);
-            return rv;
-        }
-    }
-
-    otdLog("  OpenSCToken::verifyCachedPin(): pin with ID \"%s\" not found\n",
-        sc_pkcs15_print_id(authID));
-    return SC_ERROR_SECURITY_STATUS_NOT_SATISFIED;
-}
-
-
-void OpenSCToken::cachePIN(sc_pkcs15_pin_info_t *pin_info,
-const unsigned char *pin, size_t pinLength)
-{
-    map<sc_pkcs15_pin_info_t *, pin_t>::iterator it;
-    pin_t pinval;
-
-    strncpy((char *) pinval.value, (const char *) pin, SC_MAX_PIN_SIZE);
-    pinval.len = pinLength < SC_MAX_PIN_SIZE ? pinLength : SC_MAX_PIN_SIZE;
-
-    for (it = mPinCache.begin(); it != mPinCache.end(); it++)
-    {
-        if (sc_pkcs15_compare_id(&pin_info->auth_id, &it->first->auth_id))
-        {
-            it->second = pinval;
-        }
-    }
-
-    // Pin not yet cached -> make a new entry
-    mPinCache.insert(make_pair(pin_info, pinval));
-}
-
 
 void OpenSCToken::unverifyPIN(int pinNum)
 {

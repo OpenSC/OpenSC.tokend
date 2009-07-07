@@ -150,29 +150,6 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
     // Call OpenSC to do the actual signing
     int rv = sc_pkcs15_compute_signature(mToken.mScP15Card,
         mKey.object(), flags, input.Data, input.Length, outputData, keyLength);
-    if (rv == SC_ERROR_SECURITY_STATUS_NOT_SATISFIED)
-    {
-        otdLog("  not (longer) logged in, trying to do it now (again)\n");
-        rv = sc_lock(mToken.mScP15Card->card);
-        if (rv < 0)
-            otdLog("  sc_lock() failed: %d\n", rv);
-        else
-        {
-            if (mKey.object()->user_consent)
-            {
-                otdLog("  Userconsent key -> won't try to use cached PIN\n");
-                rv = SC_ERROR_SECURITY_STATUS_NOT_SATISFIED;
-            }
-            else
-                rv = mToken.verifyCachedPIN(&mKey.object()->auth_id);
-            if (rv >= 0)
-            {
-                rv = sc_pkcs15_compute_signature(mToken.mScP15Card,
-                    mKey.object(), flags, input.Data, input.Length, outputData, keyLength);
-            }
-            sc_unlock(mToken.mScP15Card->card);
-        }
-    }
     otdLog("  sc_pkcs15_compute_signature(): rv = %d\n", rv);
     if (rv < 0)
     {
@@ -241,24 +218,6 @@ const CssmData &cipher, CssmData &clear)
     int rv = sc_pkcs15_decipher(mToken.mScP15Card,
         mKey.object(), SC_ALGORITHM_RSA_PAD_PKCS1,
         cipher.Data, cipher.Length, outputData, cipher.Length);
-    if (rv == SC_ERROR_SECURITY_STATUS_NOT_SATISFIED)
-    {
-        otdLog("  not (longer) logged in, trying to do it now (again)\n");
-        rv = sc_lock(mToken.mScP15Card->card);
-        if (rv < 0)
-            otdLog("  sc_lock() failed: %d\n", rv);
-        else
-        {
-            rv = mToken.verifyCachedPIN(&mKey.object()->auth_id);
-            if (rv >= 0)
-            {
-                rv = sc_pkcs15_decipher(mToken.mScP15Card,
-                    mKey.object(), SC_ALGORITHM_RSA_PAD_PKCS1,
-                    cipher.Data, cipher.Length, outputData, cipher.Length);
-            }
-            sc_unlock(mToken.mScP15Card->card);
-        }
-    }
     otdLog("  sc_pkcs15_decipher(): rv = %d\n", rv);
     if (rv < 0)
     {

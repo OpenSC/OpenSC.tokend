@@ -65,9 +65,6 @@ class OpenSCToken : public Tokend::ISO7816Token
         virtual uint32_t pinStatus(int pinNum);
         virtual void verifyPIN(int pinNum, const unsigned char *pin, size_t pinLength);
         virtual void unverifyPIN(int pinNum);
-        virtual int verifyCachedPIN(const sc_pkcs15_id *authID);
-        virtual void cachePIN(sc_pkcs15_pin_info_t *pin_info,
-            const unsigned char *pin, size_t pinLength);
 
         virtual bool isLocked();
         //virtual void authenticate(CSSM_DB_ACCESS_TYPE mode, const AccessCredentials *cred);
@@ -96,13 +93,6 @@ class OpenSCToken : public Tokend::ISO7816Token
 
         map<int, const sc_pkcs15_id_t *> mPinMap;
         int mPinCount;
-
-        typedef struct
-        {
-            unsigned char value[SC_MAX_PIN_SIZE];
-            size_t len;
-        } pin_t;
-        map<sc_pkcs15_pin_info_t *, pin_t> mPinCache;
 };
 
 //extern const unsigned char kMF_OpenSC[];
