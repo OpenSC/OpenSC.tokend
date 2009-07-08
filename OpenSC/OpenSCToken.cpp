@@ -279,6 +279,15 @@ char tokenUid[TOKEND_MAX_UID])
                         strlcpy(tokenUid + strlen(tokenUid), mScP15Card->serial_number,
                             TOKEND_MAX_UID - strlen(tokenUid));
 
+					{
+						/* replace non ASCII chars by '_' */
+						int i;
+						unsigned char *c = (unsigned char *)tokenUid;
+
+						for (i=0; tokenUid[i]; i++)
+							if (c[i] > 127)
+								tokenUid[i] = '_';
+					}
                     otdLog("    score = %d, tokenUid = \"%s\"\n", score, tokenUid);
                 }
             }
