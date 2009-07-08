@@ -38,6 +38,7 @@
 
 #include "Schema.h"
 #include "OpenSCKeyHandle.h"
+#include "OpenSCAttributeCoder.h"
 
 namespace Tokend
 {
@@ -61,7 +62,7 @@ class OpenSCSchema : public Tokend::Schema
 
     private:
         Tokend::ConstAttributeCoder mKeyAlgorithmCoder;
-        Tokend::ConstAttributeCoder mKeySizeCoder;
+		OpenSCKeyAttributeCoder mKeyAttributeCoder;
 
         OpenSCKeyHandleFactory mOpenSCKeyHandleFactory;
 };

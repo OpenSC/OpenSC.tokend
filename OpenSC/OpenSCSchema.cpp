@@ -44,7 +44,7 @@ using namespace Tokend;
 
 OpenSCSchema::OpenSCSchema() :
 mKeyAlgorithmCoder(uint32(CSSM_ALGID_RSA)),
-mKeySizeCoder(uint32(1024))
+	mKeyAttributeCoder()
 {
 }
 
@@ -67,8 +67,8 @@ Tokend::Relation *OpenSCSchema::createKeyRelation(CSSM_DB_RECORDTYPE keyType)
 
     // Other key valuess
     mr.attributeCoder(kSecKeyKeyType, &mKeyAlgorithmCoder);
-    mr.attributeCoder(kSecKeyKeySizeInBits, &mKeySizeCoder);
-    mr.attributeCoder(kSecKeyEffectiveKeySize, &mKeySizeCoder);
+	mr.attributeCoder(kSecKeyKeySizeInBits, &mKeyAttributeCoder);
+	mr.attributeCoder(kSecKeyEffectiveKeySize, &mKeyAttributeCoder);
 
     // Key attributes
     mr.attributeCoder(kSecKeyExtractable, &mFalseCoder);

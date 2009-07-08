@@ -71,6 +71,7 @@
 		5B59A28C0F431ACB003CD203 /* libopensc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B59A2890F431ACB003CD203 /* libopensc.dylib */; };
 		5B59A28D0F431ACB003CD203 /* libpkcs15init.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B59A28A0F431ACB003CD203 /* libpkcs15init.dylib */; };
 		5B59A28E0F431ACB003CD203 /* libscconf.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B59A28B0F431ACB003CD203 /* libscconf.dylib */; };
+		5BB2875410049F3200F41103 /* OpenSCAttributeCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2875210049F3200F41103 /* OpenSCAttributeCoder.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -180,6 +181,8 @@
 		5B59A2890F431ACB003CD203 /* libopensc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopensc.dylib; path = /Library/OpenSC/lib/libopensc.dylib; sourceTree = "<absolute>"; };
 		5B59A28A0F431ACB003CD203 /* libpkcs15init.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpkcs15init.dylib; path = /Library/OpenSC/lib/libpkcs15init.dylib; sourceTree = "<absolute>"; };
 		5B59A28B0F431ACB003CD203 /* libscconf.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libscconf.dylib; path = /Library/OpenSC/lib/libscconf.dylib; sourceTree = "<absolute>"; };
+		5BB2875210049F3200F41103 /* OpenSCAttributeCoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenSCAttributeCoder.cpp; sourceTree = "<group>"; };
+		5BB2875310049F3200F41103 /* OpenSCAttributeCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSCAttributeCoder.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -289,6 +292,8 @@
 		5B59A2670F431A9E003CD203 /* OpenSC */ = {
 			isa = PBXGroup;
 			children = (
+				5BB2875210049F3200F41103 /* OpenSCAttributeCoder.cpp */,
+				5BB2875310049F3200F41103 /* OpenSCAttributeCoder.h */,
 				5B59A2680F431A9E003CD203 /* Info.plist */,
 				5B59A2690F431A9E003CD203 /* mds */,
 				5B59A26F0F431A9E003CD203 /* opensc.cpp */,
@@ -501,6 +506,7 @@
 				5B59A2860F431A9E003CD203 /* OpenSCRecord.cpp in Sources */,
 				5B59A2870F431A9E003CD203 /* OpenSCSchema.cpp in Sources */,
 				5B59A2880F431A9E003CD203 /* OpenSCToken.cpp in Sources */,
+				5BB2875410049F3200F41103 /* OpenSCAttributeCoder.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

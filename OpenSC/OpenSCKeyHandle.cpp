@@ -59,7 +59,7 @@ void OpenSCKeyHandle::getKeySize(CSSM_KEY_SIZE &keySize)
 uint32 OpenSCKeyHandle::getOutputSize(const Context &context,
 uint32 inputSize, bool encrypting)
 {
-    otdLog("In OpenSCKeyHandle::getKeySize()\n");
+	otdLog("In OpenSCKeyHandle::geOutputSize()\n");
     secdebug("crypto", "getOutputSize");
     CssmError::throwMe(CSSM_ERRCODE_FUNCTION_NOT_IMPLEMENTED);
     return 0;
@@ -147,6 +147,7 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
     if (outputData == NULL)
         CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
 
+	otdLog("  Signing buffers: inlen=%d, outlen=%d\n",input.Length, keyLength);
     // Call OpenSC to do the actual signing
     int rv = sc_pkcs15_compute_signature(mToken.mScP15Card,
         mKey.object(), flags, input.Data, input.Length, outputData, keyLength);
@@ -199,7 +200,7 @@ const CssmData &clear, CssmData &cipher)
 void OpenSCKeyHandle::decrypt(const Context &context,
 const CssmData &cipher, CssmData &clear)
 {
-    secdebug("crypto", "decrypt alg: %lu", context.algorithm());
+    secdebug("crypto", "decrypt alg: %lu", (long unsigned int) context.algorithm());
     otdLog("In OpenSCKeyHandle::decrypt(ciphertext length = %d)\n", cipher.Length);
 
     if (context.type() != CSSM_ALGCLASS_ASYMMETRIC)
