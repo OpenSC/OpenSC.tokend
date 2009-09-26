@@ -36,7 +36,7 @@
 
 OpenSCRecord::OpenSCRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object) : mObject(object), mToken(openSCToken)
 {
-    mDescription = object->label;
+	mDescription = object->label;
 }
 
 
@@ -45,57 +45,54 @@ OpenSCRecord::OpenSCRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *o
 OpenSCCertificateRecord::OpenSCCertificateRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object) :
 OpenSCRecord(openSCToken, object)
 {
-    mCertInfo = (sc_pkcs15_cert_info_t *) object->data;
+	mCertInfo = (sc_pkcs15_cert_info_t *) object->data;
 }
 
 
 Tokend::Attribute *OpenSCCertificateRecord::getDataAttribute(
 Tokend::TokenContext *tokenContext)
 {
-    CssmData data;
-    OpenSCToken &openSCToken = static_cast<OpenSCToken &>(*tokenContext);
+	CssmData data;
+	OpenSCToken &openSCToken = static_cast<OpenSCToken &>(*tokenContext);
 
-    // is it cached already?
-    if (openSCToken.cachedObject(0, mDescription, data))
-    {
-        Tokend::Attribute *attribute = new Tokend::Attribute(data.Data, data.Length);
-        free(data.Data);
-        return attribute;
-    }
+	// is it cached already?
+	if (openSCToken.cachedObject(0, mDescription, data)) {
+		Tokend::Attribute *attribute = new Tokend::Attribute(data.Data, data.Length);
+		free(data.Data);
+		return attribute;
+	}
 
-    sc_pkcs15_cert_t *cert;
+	sc_pkcs15_cert_t *cert;
 
-    int r = sc_pkcs15_read_certificate(openSCToken.mScP15Card, mCertInfo, &cert);
+	int r = sc_pkcs15_read_certificate(openSCToken.mScP15Card, mCertInfo, &cert);
 
-    sc_debug(mToken->mScCtx, "OpenSCCertificateRecord::getDataAttribute(): sc_pkcs15_read_certificate(): %d\n", r);
-    Tokend::Attribute *attrib = NULL;
-    // if we found it, cache it!
-    if (r==0)
-    {
-        data.Data = cert->data;
-        data.Length = cert->data_len;
-        openSCToken.cacheObject(0, mDescription, data);
-        attrib = new Tokend::Attribute(data.Data, data.Length);
-        sc_pkcs15_free_certificate(cert);
-    }
-    return attrib;
+	sc_debug(mToken->mScCtx, "OpenSCCertificateRecord::getDataAttribute(): sc_pkcs15_read_certificate(): %d\n", r);
+	Tokend::Attribute *attrib = NULL;
+	// if we found it, cache it!
+	if (r==0) {
+		data.Data = cert->data;
+		data.Length = cert->data_len;
+		openSCToken.cacheObject(0, mDescription, data);
+		attrib = new Tokend::Attribute(data.Data, data.Length);
+		sc_pkcs15_free_certificate(cert);
+	}
+	return attrib;
 }
 
 
 void OpenSCCertificateRecord::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls)
 {
-    sc_debug(mToken->mScCtx, "In OpenSCCertificateRecord::getAcl, tag is: %s\n", tag);
-    if (!mAclEntries)
-    {
-        mAclEntries.allocator(Allocator::standard());
-        // certificates are for public inspection
-        mAclEntries.add(CssmClient::AclFactory::AnySubject(
-            mAclEntries.allocator()),
-            AclAuthorizationSet(CSSM_ACL_AUTHORIZATION_DB_READ, 0));
-    }
-    count = mAclEntries.size();
-    acls = mAclEntries.entries();
-    sc_debug(mToken->mScCtx, "  returned %d ACL entries\n", count);
+	sc_debug(mToken->mScCtx, "In OpenSCCertificateRecord::getAcl, tag is: %s\n", tag);
+	if (!mAclEntries) {
+		mAclEntries.allocator(Allocator::standard());
+		// certificates are for public inspection
+		mAclEntries.add(CssmClient::AclFactory::AnySubject(
+			mAclEntries.allocator()),
+			AclAuthorizationSet(CSSM_ACL_AUTHORIZATION_DB_READ, 0));
+	}
+	count = mAclEntries.size();
+	acls = mAclEntries.entries();
+	sc_debug(mToken->mScCtx, "  returned %d ACL entries\n", count);
 }
 
 
@@ -105,66 +102,63 @@ OpenSCKeyRecord::OpenSCKeyRecord(OpenSCToken *openSCToken, const sc_pkcs15_objec
 const Tokend::MetaRecord &metaRecord) :
 OpenSCRecord(openSCToken, object)
 {
-    // find out key attributes!
-    attributeAtIndex(metaRecord.metaAttribute(kSecKeyDecrypt).attributeIndex(),
-        new Tokend::Attribute(true));
-    attributeAtIndex(metaRecord.metaAttribute(kSecKeyUnwrap).attributeIndex(),
-        new Tokend::Attribute(true));
-    attributeAtIndex(metaRecord.metaAttribute(kSecKeySign).attributeIndex(),
-        new Tokend::Attribute(true));
-    mToken = openSCToken;
-    mPrKeyObj = object;
+	// find out key attributes!
+	attributeAtIndex(metaRecord.metaAttribute(kSecKeyDecrypt).attributeIndex(),
+		new Tokend::Attribute(true));
+	attributeAtIndex(metaRecord.metaAttribute(kSecKeyUnwrap).attributeIndex(),
+		new Tokend::Attribute(true));
+	attributeAtIndex(metaRecord.metaAttribute(kSecKeySign).attributeIndex(),
+		new Tokend::Attribute(true));
+	mToken = openSCToken;
+	mPrKeyObj = object;
 }
 
 
 void OpenSCKeyRecord::getOwner(AclOwnerPrototype &owner)
 {
-    sc_debug(mToken->mScCtx, "In OpenSCKeyRecord::getOwner()\n");
-    // we claim we're owned by PIN #1
-    if (!mAclOwner)
-    {
-        mAclOwner.allocator(Allocator::standard());
-        mAclOwner = CssmClient::AclFactory::PinSubject(Allocator::standard(), 1);
-    }
-    owner = mAclOwner;
+	sc_debug(mToken->mScCtx, "In OpenSCKeyRecord::getOwner()\n");
+	// we claim we're owned by PIN #1
+	if (!mAclOwner) {
+		mAclOwner.allocator(Allocator::standard());
+		mAclOwner = CssmClient::AclFactory::PinSubject(Allocator::standard(), 1);
+	}
+	owner = mAclOwner;
 }
 
 
 void OpenSCKeyRecord::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls)
 {
-    sc_debug(mToken->mScCtx, "In OpenSCKeyRecord::getAcl, tag is: %s\n", tag);
-    if (!mAclEntries)
-    {
-        mAclEntries.allocator(Allocator::standard());
-        // Anyone can read the DB record for this key (which is a reference CSSM_KEY)
-        sc_debug(mToken->mScCtx, "DB read for a reference key object is always OK\n");
-        // Anyone can read the DB record for this key (which is a reference
-        // CSSM_KEY)
-        mAclEntries.add(CssmClient::AclFactory::AnySubject(
-            mAclEntries.allocator()),
-            AclAuthorizationSet(CSSM_ACL_AUTHORIZATION_DB_READ, 0));
+	sc_debug(mToken->mScCtx, "In OpenSCKeyRecord::getAcl, tag is: %s\n", tag);
+	if (!mAclEntries) {
+		mAclEntries.allocator(Allocator::standard());
+		// Anyone can read the DB record for this key (which is a reference CSSM_KEY)
+		sc_debug(mToken->mScCtx, "DB read for a reference key object is always OK\n");
+		// Anyone can read the DB record for this key (which is a reference
+		// CSSM_KEY)
+		mAclEntries.add(CssmClient::AclFactory::AnySubject(
+			mAclEntries.allocator()),
+			AclAuthorizationSet(CSSM_ACL_AUTHORIZATION_DB_READ, 0));
 
-        // The pinNum uniquely identifies the AuthID of the PIN needed to use this key,
-        // so when OpenSCToken::verifyPIN() is called with this pinNum, we know which
-        // PIN we have to verify
-        int pinNum = mToken->getRefFromPinMap(&mPrKeyObj->auth_id);
-        sc_debug(mToken->mScCtx, "  auth_id for PIN: %s, pinNum = %d\n",
-            sc_pkcs15_print_id(&mPrKeyObj->auth_id), pinNum);
-        if (pinNum != -1)
-        {
-            char tmptag[20];
-            snprintf(tmptag, sizeof(tmptag), "PIN%d", pinNum);
-            mAclEntries.add(CssmClient::AclFactory::PinSubject(
-                mAclEntries.allocator(), pinNum),
-                AclAuthorizationSet(CSSM_ACL_AUTHORIZATION_ENCRYPT,
-                CSSM_ACL_AUTHORIZATION_DECRYPT,
-                CSSM_ACL_AUTHORIZATION_SIGN,
-                CSSM_ACL_AUTHORIZATION_MAC,
-                CSSM_ACL_AUTHORIZATION_DERIVE,
-                0), tmptag);
-        }
-    }
-    count = mAclEntries.size();
-    acls = mAclEntries.entries();
-    sc_debug(mToken->mScCtx, "  retuning %d ACL entries\n", count);
+		// The pinNum uniquely identifies the AuthID of the PIN needed to use this key,
+		// so when OpenSCToken::verifyPIN() is called with this pinNum, we know which
+		// PIN we have to verify
+		int pinNum = mToken->getRefFromPinMap(&mPrKeyObj->auth_id);
+		sc_debug(mToken->mScCtx, "  auth_id for PIN: %s, pinNum = %d\n",
+			sc_pkcs15_print_id(&mPrKeyObj->auth_id), pinNum);
+		if (pinNum != -1) {
+			char tmptag[20];
+			snprintf(tmptag, sizeof(tmptag), "PIN%d", pinNum);
+			mAclEntries.add(CssmClient::AclFactory::PinSubject(
+				mAclEntries.allocator(), pinNum),
+				AclAuthorizationSet(CSSM_ACL_AUTHORIZATION_ENCRYPT,
+				CSSM_ACL_AUTHORIZATION_DECRYPT,
+				CSSM_ACL_AUTHORIZATION_SIGN,
+				CSSM_ACL_AUTHORIZATION_MAC,
+				CSSM_ACL_AUTHORIZATION_DERIVE,
+				0), tmptag);
+		}
+	}
+	count = mAclEntries.size();
+	acls = mAclEntries.entries();
+	sc_debug(mToken->mScCtx, "  retuning %d ACL entries\n", count);
 }

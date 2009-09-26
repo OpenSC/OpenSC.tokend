@@ -36,9 +36,9 @@
 
 int main(int argc, const char *argv[])
 {
-    secdebug("OpenSC.tokend", "main starting with %d arguments", argc);
-    secdelay("/tmp/delay/OpenSC");
+	secdebug("OpenSC.tokend", "main starting with %d arguments", argc);
+	secdelay("/tmp/delay/OpenSC");
 
-    token = new OpenSCToken();
-    return SecTokendMain(argc, argv, token->callbacks(), token->support());
+	token = new OpenSCToken();
+	return SecTokendMain(argc, argv, token->callbacks(), token->support());
 }

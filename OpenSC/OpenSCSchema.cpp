@@ -44,7 +44,7 @@ using namespace Tokend;
 
 OpenSCSchema::OpenSCSchema() :
 mKeyAlgorithmCoder(uint32(CSSM_ALGID_RSA)),
-	mKeyAttributeCoder()
+mKeyAttributeCoder()
 {
 }
 
@@ -56,45 +56,45 @@ OpenSCSchema::~OpenSCSchema()
 
 Tokend::Relation *OpenSCSchema::createKeyRelation(CSSM_DB_RECORDTYPE keyType)
 {
-    Relation *rn = createStandardRelation(keyType);
+	Relation *rn = createStandardRelation(keyType);
 
-    // Set up coders for key records.
-    MetaRecord &mr = rn->metaRecord();
-    mr.keyHandleFactory(&mOpenSCKeyHandleFactory);
+	// Set up coders for key records.
+	MetaRecord &mr = rn->metaRecord();
+	mr.keyHandleFactory(&mOpenSCKeyHandleFactory);
 
-    // Print name of a key might as well be the key name.
-    mr.attributeCoder(kSecKeyPrintName, &mDescriptionCoder);
+	// Print name of a key might as well be the key name.
+	mr.attributeCoder(kSecKeyPrintName, &mDescriptionCoder);
 
-    // Other key valuess
-    mr.attributeCoder(kSecKeyKeyType, &mKeyAlgorithmCoder);
+	// Other key valuess
+	mr.attributeCoder(kSecKeyKeyType, &mKeyAlgorithmCoder);
 	mr.attributeCoder(kSecKeyKeySizeInBits, &mKeyAttributeCoder);
 	mr.attributeCoder(kSecKeyEffectiveKeySize, &mKeyAttributeCoder);
 
-    // Key attributes
-    mr.attributeCoder(kSecKeyExtractable, &mFalseCoder);
-    mr.attributeCoder(kSecKeySensitive, &mTrueCoder);
-    mr.attributeCoder(kSecKeyModifiable, &mFalseCoder);
-    mr.attributeCoder(kSecKeyPrivate, &mTrueCoder);
-    mr.attributeCoder(kSecKeyNeverExtractable, &mTrueCoder);
-    mr.attributeCoder(kSecKeyAlwaysSensitive, &mTrueCoder);
+	// Key attributes
+	mr.attributeCoder(kSecKeyExtractable, &mFalseCoder);
+	mr.attributeCoder(kSecKeySensitive, &mTrueCoder);
+	mr.attributeCoder(kSecKeyModifiable, &mFalseCoder);
+	mr.attributeCoder(kSecKeyPrivate, &mTrueCoder);
+	mr.attributeCoder(kSecKeyNeverExtractable, &mTrueCoder);
+	mr.attributeCoder(kSecKeyAlwaysSensitive, &mTrueCoder);
 
-    // Key usage
-    mr.attributeCoder(kSecKeyEncrypt, &mFalseCoder);
-    mr.attributeCoder(kSecKeyWrap, &mFalseCoder);
-    mr.attributeCoder(kSecKeyVerify, &mFalseCoder);
-    mr.attributeCoder(kSecKeyDerive, &mFalseCoder);
-    mr.attributeCoder(kSecKeySignRecover, &mFalseCoder);
-    mr.attributeCoder(kSecKeyVerifyRecover, &mFalseCoder);
+	// Key usage
+	mr.attributeCoder(kSecKeyEncrypt, &mFalseCoder);
+	mr.attributeCoder(kSecKeyWrap, &mFalseCoder);
+	mr.attributeCoder(kSecKeyVerify, &mFalseCoder);
+	mr.attributeCoder(kSecKeyDerive, &mFalseCoder);
+	mr.attributeCoder(kSecKeySignRecover, &mFalseCoder);
+	mr.attributeCoder(kSecKeyVerifyRecover, &mFalseCoder);
 
-    return rn;
+	return rn;
 }
 
 
 void OpenSCSchema::create()
 {
-    Schema::create();
+	Schema::create();
 
-    createStandardRelation(CSSM_DL_DB_RECORD_X509_CERTIFICATE);
-    createKeyRelation(CSSM_DL_DB_RECORD_PRIVATE_KEY);
-    createStandardRelation(CSSM_DL_DB_RECORD_GENERIC);
+	createStandardRelation(CSSM_DL_DB_RECORD_X509_CERTIFICATE);
+	createKeyRelation(CSSM_DL_DB_RECORD_PRIVATE_KEY);
+	createStandardRelation(CSSM_DL_DB_RECORD_GENERIC);
 }

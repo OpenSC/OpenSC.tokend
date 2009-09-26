@@ -40,15 +40,15 @@
 
 class OpenSCError : public Tokend::SCardError
 {
-    protected:
-        OpenSCError(uint16_t sw);
-    public:
-        virtual const char *what () const throw ();
+	protected:
+		OpenSCError(uint16_t sw);
+	public:
+		virtual const char *what () const throw ();
 
-        static void check(uint16_t sw)  { if (sw != SCARD_SUCCESS) throwMe(sw); }
-        static void throwMe(uint16_t sw) __attribute__((noreturn));
-    protected:
-        IFDEBUG(void debugDiagnose(const void *id) const;)
+		static void check(uint16_t sw)  { if (sw != SCARD_SUCCESS) throwMe(sw); }
+		static void throwMe(uint16_t sw) __attribute__((noreturn));
+	protected:
+		IFDEBUG(void debugDiagnose(const void *id) const;)
 };
 /* !_OpenSCERROR_H_ */
 #endif

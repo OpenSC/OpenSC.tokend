@@ -45,56 +45,56 @@ class OpenSCSchema;
 //
 class OpenSCToken : public Tokend::ISO7816Token
 {
-        NOCOPY(OpenSCToken)
-    public:
-        OpenSCToken();
-        ~OpenSCToken();
+	NOCOPY(OpenSCToken)
+		public:
+		OpenSCToken();
+		~OpenSCToken();
 
-        virtual void didDisconnect();
-        virtual void didEnd();
+		virtual void didDisconnect();
+		virtual void didEnd();
 
-        virtual uint32 probe(SecTokendProbeFlags flags, char tokenUid[TOKEND_MAX_UID]);
-        virtual void establish(const CSSM_GUID *guid, uint32 subserviceId,
-            SecTokendEstablishFlags flags, const char *cacheDirectory,
-            const char *workDirectory, char mdsDirectory[PATH_MAX],
-            char printName[PATH_MAX]);
-        virtual void getOwner(AclOwnerPrototype &owner);
-        virtual void getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls);
+		virtual uint32 probe(SecTokendProbeFlags flags, char tokenUid[TOKEND_MAX_UID]);
+		virtual void establish(const CSSM_GUID *guid, uint32 subserviceId,
+			SecTokendEstablishFlags flags, const char *cacheDirectory,
+			const char *workDirectory, char mdsDirectory[PATH_MAX],
+			char printName[PATH_MAX]);
+		virtual void getOwner(AclOwnerPrototype &owner);
+		virtual void getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls);
 
-        virtual void changePIN(int pinNum,
-            const unsigned char *oldPin, size_t oldPinLength,
-            const unsigned char *newPin, size_t newPinLength);
-        virtual uint32_t pinStatus(int pinNum);
-        virtual void verifyPIN(int pinNum, const unsigned char *pin, size_t pinLength);
-        virtual void unverifyPIN(int pinNum);
+		virtual void changePIN(int pinNum,
+			const unsigned char *oldPin, size_t oldPinLength,
+			const unsigned char *newPin, size_t newPinLength);
+		virtual uint32_t pinStatus(int pinNum);
+		virtual void verifyPIN(int pinNum, const unsigned char *pin, size_t pinLength);
+		virtual void unverifyPIN(int pinNum);
 
-        virtual bool isLocked();
-        //virtual void authenticate(CSSM_DB_ACCESS_TYPE mode, const AccessCredentials *cred);
-        bool _verifyPIN(int pinNum, const unsigned char *pin, size_t pinLength);
+		virtual bool isLocked();
+		//virtual void authenticate(CSSM_DB_ACCESS_TYPE mode, const AccessCredentials *cred);
+		bool _verifyPIN(int pinNum, const unsigned char *pin, size_t pinLength);
 
-        bool _changePIN( int pinNum,
-            const unsigned char *oldPin, size_t oldPinLength,
-            const unsigned char *newPin, size_t newPinLength );
+		bool _changePIN( int pinNum,
+			const unsigned char *oldPin, size_t oldPinLength,
+			const unsigned char *newPin, size_t newPinLength );
 
-        // To manipulate mPinMap
-        void addToPinMap(const sc_pkcs15_id_t *id);
-        int getRefFromPinMap(const sc_pkcs15_id_t *id);
-        const sc_pkcs15_id_t * getIdFromPinMap(int pinNum);
+		// To manipulate mPinMap
+		void addToPinMap(const sc_pkcs15_id_t *id);
+		int getRefFromPinMap(const sc_pkcs15_id_t *id);
+		const sc_pkcs15_id_t * getIdFromPinMap(int pinNum);
 
-    public:
-        sc_context_t *mScCtx;
-        sc_card_t *mScCard;
-        sc_pkcs15_card_t *mScP15Card;
+	public:
+		sc_context_t *mScCtx;
+		sc_card_t *mScCard;
+		sc_pkcs15_card_t *mScP15Card;
 
-    private:
-        void populate();
-        // temporary ACL cache hack - to be removed
-        AutoAclOwnerPrototype mAclOwner;
-        AutoAclEntryInfoList mAclEntries;
-        bool mLocked;
+	private:
+		void populate();
+		// temporary ACL cache hack - to be removed
+		AutoAclOwnerPrototype mAclOwner;
+		AutoAclEntryInfoList mAclEntries;
+		bool mLocked;
 
-        map<int, const sc_pkcs15_id_t *> mPinMap;
-        int mPinCount;
+		map<int, const sc_pkcs15_id_t *> mPinMap;
+		int mPinCount;
 };
 
 /* !_OpenSCTOKEN_H_ */

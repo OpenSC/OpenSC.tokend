@@ -34,50 +34,50 @@ class OpenSCToken;
 
 class OpenSCRecord : public Tokend::Record
 {
-    NOCOPY(OpenSCRecord)
-        public:
-        OpenSCRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object);
-        ~OpenSCRecord() {}
+	NOCOPY(OpenSCRecord)
+		public:
+		OpenSCRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object);
+		~OpenSCRecord() {}
 
-        virtual const char *description() { return mDescription; }
-        const sc_pkcs15_object_t * object() { return mObject; }
-    protected:
-        const char *mDescription;
-        const sc_pkcs15_object_t *mObject;
-        OpenSCToken *mToken;
+		virtual const char *description() { return mDescription; }
+		const sc_pkcs15_object_t * object() { return mObject; }
+	protected:
+		const char *mDescription;
+		const sc_pkcs15_object_t *mObject;
+		OpenSCToken *mToken;
 };
 
 class OpenSCCertificateRecord : public OpenSCRecord
 {
-    NOCOPY(OpenSCCertificateRecord)
-        public:
-        OpenSCCertificateRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object);
-        ~OpenSCCertificateRecord() {}
-        virtual Tokend::Attribute *getDataAttribute(Tokend::TokenContext *tokenContext);
-        virtual void getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls);
+	NOCOPY(OpenSCCertificateRecord)
+		public:
+		OpenSCCertificateRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object);
+		~OpenSCCertificateRecord() {}
+		virtual Tokend::Attribute *getDataAttribute(Tokend::TokenContext *tokenContext);
+		virtual void getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls);
 
-    private:
-        const sc_pkcs15_cert_info_t *mCertInfo;
-        AutoAclEntryInfoList mAclEntries;
+	private:
+		const sc_pkcs15_cert_info_t *mCertInfo;
+		AutoAclEntryInfoList mAclEntries;
 };
 
 class OpenSCKeyRecord : public OpenSCRecord
 {
-    NOCOPY(OpenSCKeyRecord)
-        public:
-        OpenSCKeyRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object,
-            const Tokend::MetaRecord &metaRecord);
-        ~OpenSCKeyRecord() {}
+	NOCOPY(OpenSCKeyRecord)
+		public:
+		OpenSCKeyRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object,
+			const Tokend::MetaRecord &metaRecord);
+		~OpenSCKeyRecord() {}
 
-        size_t sizeInBits() const { return 1048; }
+		size_t sizeInBits() const { return 1048; }
 
-        virtual void getOwner(AclOwnerPrototype &owner);
-        virtual void getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls);
+		virtual void getOwner(AclOwnerPrototype &owner);
+		virtual void getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls);
 
-    private:
-        const sc_pkcs15_object_t *mPrKeyObj;
-        AutoAclOwnerPrototype mAclOwner;
-        AutoAclEntryInfoList mAclEntries;
+	private:
+		const sc_pkcs15_object_t *mPrKeyObj;
+		AutoAclOwnerPrototype mAclOwner;
+		AutoAclEntryInfoList mAclEntries;
 };
 /* !_OpenSCRECORD_H_ */
 #endif

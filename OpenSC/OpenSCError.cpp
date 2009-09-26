@@ -40,7 +40,7 @@
 //
 OpenSCError::OpenSCError(uint16_t sw) : SCardError(sw)
 {
-    IFDEBUG(debugDiagnose(this));
+	IFDEBUG(debugDiagnose(this));
 }
 
 
@@ -54,8 +54,8 @@ void OpenSCError::throwMe(uint16_t sw)
 
 void OpenSCError::debugDiagnose(const void *id) const
 {
-    secdebug("exception", "%p OpenSCError %s (%04hX)",
-        id, errorstr(statusWord), statusWord);
+	secdebug("exception", "%p OpenSCError %s (%04hX)",
+		id, errorstr(statusWord), statusWord);
 }
 
 

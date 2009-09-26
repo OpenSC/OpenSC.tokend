@@ -43,30 +43,30 @@ class OpenSCKeyRecord;
 
 class OpenSCKeyHandle: public Tokend::KeyHandle
 {
-    NOCOPY(OpenSCKeyHandle)
-        public:
-        OpenSCKeyHandle(OpenSCToken &OpenSCToken,
-            const Tokend::MetaRecord &metaRecord, OpenSCKeyRecord &cacKey);
-        ~OpenSCKeyHandle();
+	NOCOPY(OpenSCKeyHandle)
+		public:
+		OpenSCKeyHandle(OpenSCToken &OpenSCToken,
+			const Tokend::MetaRecord &metaRecord, OpenSCKeyRecord &cacKey);
+		~OpenSCKeyHandle();
 
-        virtual void getKeySize(CSSM_KEY_SIZE &keySize);
-        virtual uint32 getOutputSize(const Context &context, uint32 inputSize,
-            bool encrypting);
-        virtual void generateSignature(const Context &context,
-            CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature);
-        virtual void verifySignature(const Context &context,
-            CSSM_ALGORITHMS signOnly, const CssmData &input,
-            const CssmData &signature);
-        virtual void generateMac(const Context &context, const CssmData &input, CssmData &output);
-        virtual void verifyMac(const Context &context, const CssmData &input, const CssmData &compare);
-        virtual void encrypt(const Context &context, const CssmData &clear, CssmData &cipher);
-        virtual void decrypt(const Context &context, const CssmData &cipher, CssmData &clear);
+		virtual void getKeySize(CSSM_KEY_SIZE &keySize);
+		virtual uint32 getOutputSize(const Context &context, uint32 inputSize,
+			bool encrypting);
+		virtual void generateSignature(const Context &context,
+			CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature);
+		virtual void verifySignature(const Context &context,
+			CSSM_ALGORITHMS signOnly, const CssmData &input,
+			const CssmData &signature);
+		virtual void generateMac(const Context &context, const CssmData &input, CssmData &output);
+		virtual void verifyMac(const Context &context, const CssmData &input, const CssmData &compare);
+		virtual void encrypt(const Context &context, const CssmData &clear, CssmData &cipher);
+		virtual void decrypt(const Context &context, const CssmData &cipher, CssmData &clear);
 
-        virtual void exportKey(const Context &context, const AccessCredentials *cred, CssmKey &wrappedKey);
+		virtual void exportKey(const Context &context, const AccessCredentials *cred, CssmKey &wrappedKey);
 
-    private:
-        OpenSCToken &mToken;
-        OpenSCKeyRecord &mKey;
+	private:
+		OpenSCToken &mToken;
+		OpenSCKeyRecord &mKey;
 };
 
 //
@@ -74,13 +74,13 @@ class OpenSCKeyHandle: public Tokend::KeyHandle
 //
 class OpenSCKeyHandleFactory : public Tokend::KeyHandleFactory
 {
-    NOCOPY(OpenSCKeyHandleFactory)
-        public:
-        OpenSCKeyHandleFactory() {}
-        virtual ~OpenSCKeyHandleFactory();
+	NOCOPY(OpenSCKeyHandleFactory)
+		public:
+		OpenSCKeyHandleFactory() {}
+		virtual ~OpenSCKeyHandleFactory();
 
-        virtual Tokend::KeyHandle *keyHandle(Tokend::TokenContext *tokenContext,
-            const Tokend::MetaRecord &metaRecord, Tokend::Record &record) const;
+		virtual Tokend::KeyHandle *keyHandle(Tokend::TokenContext *tokenContext,
+			const Tokend::MetaRecord &metaRecord, Tokend::Record &record) const;
 };
 /* !_OpenSCKEYHANDLE_H_ */
 #endif

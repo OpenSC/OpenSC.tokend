@@ -42,29 +42,29 @@
 
 namespace Tokend
 {
-    class Relation;
-    class MetaRecord;
-    class AttributeCoder;
+	class Relation;
+	class MetaRecord;
+	class AttributeCoder;
 }
 
 
 class OpenSCSchema : public Tokend::Schema
 {
-    NOCOPY(OpenSCSchema)
-        public:
-        OpenSCSchema();
-        virtual ~OpenSCSchema();
+	NOCOPY(OpenSCSchema)
+		public:
+		OpenSCSchema();
+		virtual ~OpenSCSchema();
 
-        virtual void create();
+		virtual void create();
 
-    protected:
-        Tokend::Relation *createKeyRelation(CSSM_DB_RECORDTYPE keyType);
+	protected:
+		Tokend::Relation *createKeyRelation(CSSM_DB_RECORDTYPE keyType);
 
-    private:
-        Tokend::ConstAttributeCoder mKeyAlgorithmCoder;
+	private:
+		Tokend::ConstAttributeCoder mKeyAlgorithmCoder;
 		OpenSCKeyAttributeCoder mKeyAttributeCoder;
 
-        OpenSCKeyHandleFactory mOpenSCKeyHandleFactory;
+		OpenSCKeyHandleFactory mOpenSCKeyHandleFactory;
 };
 /* !_OpenSCSCHEMA_H_ */
 #endif
