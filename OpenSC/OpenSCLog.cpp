@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 
+// Show this number of bytes from the buffer
+#define NBYTES 16
+#define BUFSIZE NBYTES * 3 + 1 // + 1 for '\0'
+
 const static char file[] = "/tmp/opensc_tokend.log";
 
 /////////////////////////////////

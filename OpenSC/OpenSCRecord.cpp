@@ -152,6 +152,8 @@ void OpenSCKeyRecord::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls
             sc_pkcs15_print_id(&mPrKeyObj->auth_id), pinNum);
         if (pinNum != -1)
         {
+            char tmptag[20];
+            snprintf(tmptag, sizeof(tmptag), "PIN%d", pinNum);
             mAclEntries.add(CssmClient::AclFactory::PinSubject(
                 mAclEntries.allocator(), pinNum),
                 AclAuthorizationSet(CSSM_ACL_AUTHORIZATION_ENCRYPT,
@@ -159,7 +161,7 @@ void OpenSCKeyRecord::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls
                 CSSM_ACL_AUTHORIZATION_SIGN,
                 CSSM_ACL_AUTHORIZATION_MAC,
                 CSSM_ACL_AUTHORIZATION_DERIVE,
-                0));
+                0), tmptag);
         }
     }
     count = mAclEntries.size();

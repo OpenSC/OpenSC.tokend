@@ -70,7 +70,7 @@ class OpenSCToken : public Tokend::ISO7816Token
         //virtual void authenticate(CSSM_DB_ACCESS_TYPE mode, const AccessCredentials *cred);
         bool _verifyPIN(int pinNum, const unsigned char *pin, size_t pinLength);
 
-        bool OpenSCToken:: _changePIN( int pinNum,
+        bool _changePIN( int pinNum,
             const unsigned char *oldPin, size_t oldPinLength,
             const unsigned char *newPin, size_t newPinLength );
 
