@@ -23,7 +23,6 @@
 
 #include "OpenSCRecord.h"
 
-#include "OpenSCError.h"
 #include "OpenSCToken.h"
 #include "Attribute.h"
 #include "MetaAttribute.h"

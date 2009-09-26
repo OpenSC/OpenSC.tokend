@@ -29,7 +29,6 @@
 #include <opensc/opensc.h>
 #include <opensc/scconf.h>
 #include <opensc/log.h>
-#include "OpenSCError.h"
 #include "OpenSCRecord.h"
 #include "OpenSCSchema.h"
 #include <security_cdsa_client/aclclient.h>

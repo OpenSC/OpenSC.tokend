@@ -62,9 +62,7 @@
 		5B59A2800F431A9E003CD203 /* opensc_dl_primary.mdsinfo in Resources */ = {isa = PBXBuildFile; fileRef = 5B59A26D0F431A9E003CD203 /* opensc_dl_primary.mdsinfo */; };
 		5B59A2810F431A9E003CD203 /* opensc_smartcard.mdsinfo in Resources */ = {isa = PBXBuildFile; fileRef = 5B59A26E0F431A9E003CD203 /* opensc_smartcard.mdsinfo */; };
 		5B59A2820F431A9E003CD203 /* opensc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B59A26F0F431A9E003CD203 /* opensc.cpp */; };
-		5B59A2830F431A9E003CD203 /* OpenSCError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B59A2700F431A9E003CD203 /* OpenSCError.cpp */; };
 		5B59A2840F431A9E003CD203 /* OpenSCKeyHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B59A2720F431A9E003CD203 /* OpenSCKeyHandle.cpp */; };
-		5B59A2850F431A9E003CD203 /* OpenSCLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B59A2740F431A9E003CD203 /* OpenSCLog.cpp */; };
 		5B59A2860F431A9E003CD203 /* OpenSCRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B59A2760F431A9E003CD203 /* OpenSCRecord.cpp */; };
 		5B59A2870F431A9E003CD203 /* OpenSCSchema.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B59A2780F431A9E003CD203 /* OpenSCSchema.cpp */; };
 		5B59A2880F431A9E003CD203 /* OpenSCToken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B59A27A0F431A9E003CD203 /* OpenSCToken.cpp */; };
@@ -166,12 +164,8 @@
 		5B59A26D0F431A9E003CD203 /* opensc_dl_primary.mdsinfo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = opensc_dl_primary.mdsinfo; sourceTree = "<group>"; };
 		5B59A26E0F431A9E003CD203 /* opensc_smartcard.mdsinfo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = opensc_smartcard.mdsinfo; sourceTree = "<group>"; };
 		5B59A26F0F431A9E003CD203 /* opensc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opensc.cpp; sourceTree = "<group>"; };
-		5B59A2700F431A9E003CD203 /* OpenSCError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenSCError.cpp; sourceTree = "<group>"; };
-		5B59A2710F431A9E003CD203 /* OpenSCError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSCError.h; sourceTree = "<group>"; };
 		5B59A2720F431A9E003CD203 /* OpenSCKeyHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenSCKeyHandle.cpp; sourceTree = "<group>"; };
 		5B59A2730F431A9E003CD203 /* OpenSCKeyHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSCKeyHandle.h; sourceTree = "<group>"; };
-		5B59A2740F431A9E003CD203 /* OpenSCLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenSCLog.cpp; sourceTree = "<group>"; };
-		5B59A2750F431A9E003CD203 /* OpenSCLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSCLog.h; sourceTree = "<group>"; };
 		5B59A2760F431A9E003CD203 /* OpenSCRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenSCRecord.cpp; sourceTree = "<group>"; };
 		5B59A2770F431A9E003CD203 /* OpenSCRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSCRecord.h; sourceTree = "<group>"; };
 		5B59A2780F431A9E003CD203 /* OpenSCSchema.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenSCSchema.cpp; sourceTree = "<group>"; };
@@ -297,12 +291,8 @@
 				5B59A2680F431A9E003CD203 /* Info.plist */,
 				5B59A2690F431A9E003CD203 /* mds */,
 				5B59A26F0F431A9E003CD203 /* opensc.cpp */,
-				5B59A2700F431A9E003CD203 /* OpenSCError.cpp */,
-				5B59A2710F431A9E003CD203 /* OpenSCError.h */,
 				5B59A2720F431A9E003CD203 /* OpenSCKeyHandle.cpp */,
 				5B59A2730F431A9E003CD203 /* OpenSCKeyHandle.h */,
-				5B59A2740F431A9E003CD203 /* OpenSCLog.cpp */,
-				5B59A2750F431A9E003CD203 /* OpenSCLog.h */,
 				5B59A2760F431A9E003CD203 /* OpenSCRecord.cpp */,
 				5B59A2770F431A9E003CD203 /* OpenSCRecord.h */,
 				5B59A2780F431A9E003CD203 /* OpenSCSchema.cpp */,
@@ -500,9 +490,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B59A2820F431A9E003CD203 /* opensc.cpp in Sources */,
-				5B59A2830F431A9E003CD203 /* OpenSCError.cpp in Sources */,
 				5B59A2840F431A9E003CD203 /* OpenSCKeyHandle.cpp in Sources */,
-				5B59A2850F431A9E003CD203 /* OpenSCLog.cpp in Sources */,
 				5B59A2860F431A9E003CD203 /* OpenSCRecord.cpp in Sources */,
 				5B59A2870F431A9E003CD203 /* OpenSCSchema.cpp in Sources */,
 				5B59A2880F431A9E003CD203 /* OpenSCToken.cpp in Sources */,
@@ -834,7 +822,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "i386 x86_64";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)";
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
@@ -846,7 +834,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "x86_64 i386";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)";
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
