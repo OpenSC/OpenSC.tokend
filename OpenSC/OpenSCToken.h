@@ -30,6 +30,8 @@
 #define _OpenSCTOKEN_H_
 
 #include <Token.h>
+#include "TokenContext.h"
+
 #include "opensc/opensc.h"
 #include "opensc/pkcs15.h"
 #include "opensc/errors.h"
@@ -43,8 +45,8 @@ class OpenSCSchema;
 //
 class OpenSCToken : public Tokend::ISO7816Token
 {
-    NOCOPY(OpenSCToken)
-        public:
+        NOCOPY(OpenSCToken)
+    public:
         OpenSCToken();
         ~OpenSCToken();
 
@@ -95,6 +97,5 @@ class OpenSCToken : public Tokend::ISO7816Token
         int mPinCount;
 };
 
-//extern const unsigned char kMF_OpenSC[];
 /* !_OpenSCTOKEN_H_ */
 #endif

@@ -29,13 +29,13 @@
  */
 
 #include "OpenSCAttributeCoder.h"
-
+#include "OpenSCToken.h"
 #include "OpenSCRecord.h"
-#include "OpenSCLog.h"
 #include "MetaAttribute.h"
 #include "MetaRecord.h"
 #include "Attribute.h"
 #include <opensc/pkcs15.h>
+#include <opensc/log.h>
 #include <Security/SecKey.h>
 
 
@@ -55,6 +55,7 @@ void OpenSCKeyAttributeCoder::decode(Tokend::TokenContext *tokenContext,
                     const Tokend::MetaAttribute &metaAttribute,
                     Tokend::Record &record)
 {
+  OpenSCToken &token_obj = dynamic_cast<OpenSCToken &>(*tokenContext);
   OpenSCKeyRecord &keyRec = dynamic_cast<OpenSCKeyRecord &>(record);
   const sc_pkcs15_object *keyObj = keyRec.object();
   
@@ -80,13 +81,13 @@ void OpenSCKeyAttributeCoder::decode(Tokend::TokenContext *tokenContext,
       }
       else
       {
-        otdLog("Unknown keyObj type: %d\n", keyObj->type);
+		  sc_debug(token_obj.mScCtx, "Unknown keyObj type: %d\n", keyObj->type);
       }
       record.attributeAtIndex(metaAttribute.attributeIndex(), new Attribute((uint32)value));
       break;
             
     default:
-      otdLog("Unknown AttributeID: %d\n",attrId);
+      sc_debug(token_obj.mScCtx, "Unknown AttributeID: %d\n",attrId);
       break;
   }
 }

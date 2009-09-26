@@ -25,8 +25,9 @@
 #define _OpenSCRECORD_H_
 
 #include "Record.h"
-#include "opensc/opensc.h"
-#include "opensc/pkcs15.h"
+#include "OpenSCToken.h"
+#include <opensc/opensc.h>
+#include <opensc/pkcs15.h>
 #include <security_cdsa_utilities/cssmcred.h>
 
 class OpenSCToken;
@@ -35,7 +36,7 @@ class OpenSCRecord : public Tokend::Record
 {
     NOCOPY(OpenSCRecord)
         public:
-        OpenSCRecord(const sc_pkcs15_object_t *object);
+        OpenSCRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object);
         ~OpenSCRecord() {}
 
         virtual const char *description() { return mDescription; }
@@ -43,13 +44,14 @@ class OpenSCRecord : public Tokend::Record
     protected:
         const char *mDescription;
         const sc_pkcs15_object_t *mObject;
+        OpenSCToken *mToken;
 };
 
 class OpenSCCertificateRecord : public OpenSCRecord
 {
     NOCOPY(OpenSCCertificateRecord)
         public:
-        OpenSCCertificateRecord(const sc_pkcs15_object_t *object);
+        OpenSCCertificateRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object);
         ~OpenSCCertificateRecord() {}
         virtual Tokend::Attribute *getDataAttribute(Tokend::TokenContext *tokenContext);
         virtual void getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls);
@@ -73,7 +75,6 @@ class OpenSCKeyRecord : public OpenSCRecord
         virtual void getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls);
 
     private:
-        OpenSCToken *mToken;
         const sc_pkcs15_object_t *mPrKeyObj;
         AutoAclOwnerPrototype mAclOwner;
         AutoAclEntryInfoList mAclEntries;

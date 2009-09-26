@@ -25,16 +25,16 @@
 
 #include "OpenSCError.h"
 #include "OpenSCToken.h"
-#include "OpenSCLog.h"
 #include "Attribute.h"
 #include "MetaAttribute.h"
 #include "MetaRecord.h"
 #include <security_cdsa_client/aclclient.h>
 #include <Security/SecKey.h>
+#include <opensc/log.h>
 
 /**************************** OpenSCRecord *******************************/
 
-OpenSCRecord::OpenSCRecord(const sc_pkcs15_object_t *object) : mObject(object)
+OpenSCRecord::OpenSCRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object) : mObject(object), mToken(openSCToken)
 {
     mDescription = object->label;
 }
@@ -42,8 +42,8 @@ OpenSCRecord::OpenSCRecord(const sc_pkcs15_object_t *object) : mObject(object)
 
 /********************** OpenSCCertificateRecord **************************/
 
-OpenSCCertificateRecord::OpenSCCertificateRecord(const sc_pkcs15_object_t *object) :
-OpenSCRecord(object)
+OpenSCCertificateRecord::OpenSCCertificateRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object) :
+OpenSCRecord(openSCToken, object)
 {
     mCertInfo = (sc_pkcs15_cert_info_t *) object->data;
 }
@@ -67,7 +67,7 @@ Tokend::TokenContext *tokenContext)
 
     int r = sc_pkcs15_read_certificate(openSCToken.mScP15Card, mCertInfo, &cert);
 
-    otdLog("OpenSCCertificateRecord::getDataAttribute(): sc_pkcs15_read_certificate(): %d\n", r);
+    sc_debug(mToken->mScCtx, "OpenSCCertificateRecord::getDataAttribute(): sc_pkcs15_read_certificate(): %d\n", r);
     Tokend::Attribute *attrib = NULL;
     // if we found it, cache it!
     if (r==0)
@@ -84,7 +84,7 @@ Tokend::TokenContext *tokenContext)
 
 void OpenSCCertificateRecord::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls)
 {
-    otdLog("In OpenSCCertificateRecord::getAcl, tag is: %s\n", tag);
+    sc_debug(mToken->mScCtx, "In OpenSCCertificateRecord::getAcl, tag is: %s\n", tag);
     if (!mAclEntries)
     {
         mAclEntries.allocator(Allocator::standard());
@@ -95,7 +95,7 @@ void OpenSCCertificateRecord::getAcl(const char *tag, uint32 &count, AclEntryInf
     }
     count = mAclEntries.size();
     acls = mAclEntries.entries();
-    otdLog("  returned %d ACL entries\n", count);
+    sc_debug(mToken->mScCtx, "  returned %d ACL entries\n", count);
 }
 
 
@@ -103,7 +103,7 @@ void OpenSCCertificateRecord::getAcl(const char *tag, uint32 &count, AclEntryInf
 
 OpenSCKeyRecord::OpenSCKeyRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object,
 const Tokend::MetaRecord &metaRecord) :
-OpenSCRecord(object)
+OpenSCRecord(openSCToken, object)
 {
     // find out key attributes!
     attributeAtIndex(metaRecord.metaAttribute(kSecKeyDecrypt).attributeIndex(),
@@ -119,7 +119,7 @@ OpenSCRecord(object)
 
 void OpenSCKeyRecord::getOwner(AclOwnerPrototype &owner)
 {
-    otdLog("In OpenSCKeyRecord::getOwner()\n");
+    sc_debug(mToken->mScCtx, "In OpenSCKeyRecord::getOwner()\n");
     // we claim we're owned by PIN #1
     if (!mAclOwner)
     {
@@ -132,12 +132,12 @@ void OpenSCKeyRecord::getOwner(AclOwnerPrototype &owner)
 
 void OpenSCKeyRecord::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls)
 {
-    otdLog("In OpenSCKeyRecord::getAcl, tag is: %s\n", tag);
+    sc_debug(mToken->mScCtx, "In OpenSCKeyRecord::getAcl, tag is: %s\n", tag);
     if (!mAclEntries)
     {
         mAclEntries.allocator(Allocator::standard());
         // Anyone can read the DB record for this key (which is a reference CSSM_KEY)
-        otdLog("DB read for a reference key object is always OK\n");
+        sc_debug(mToken->mScCtx, "DB read for a reference key object is always OK\n");
         // Anyone can read the DB record for this key (which is a reference
         // CSSM_KEY)
         mAclEntries.add(CssmClient::AclFactory::AnySubject(
@@ -148,7 +148,7 @@ void OpenSCKeyRecord::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls
         // so when OpenSCToken::verifyPIN() is called with this pinNum, we know which
         // PIN we have to verify
         int pinNum = mToken->getRefFromPinMap(&mPrKeyObj->auth_id);
-        otdLog("  auth_id for PIN: %s, pinNum = %d\n",
+        sc_debug(mToken->mScCtx, "  auth_id for PIN: %s, pinNum = %d\n",
             sc_pkcs15_print_id(&mPrKeyObj->auth_id), pinNum);
         if (pinNum != -1)
         {
@@ -166,5 +166,5 @@ void OpenSCKeyRecord::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls
     }
     count = mAclEntries.size();
     acls = mAclEntries.entries();
-    otdLog("  retuning %d ACL entries\n", count);
+    sc_debug(mToken->mScCtx, "  retuning %d ACL entries\n", count);
 }
