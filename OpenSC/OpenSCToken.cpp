@@ -408,7 +408,6 @@ void OpenSCToken::populate()
 	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_CERT_X509, objs, 32);
 	sc_debug(mScCtx, "  sc_pkcs15_get_objects(TYPE_CERT_X509): %d\n", r);
 	if (r >= 0) {
-		r = 1;									  // Apple can really handle only a single certificate and PIN
 		for (i = 0; i < r; i++) {
 			struct sc_pkcs15_cert_info *cert_info = (struct sc_pkcs15_cert_info *) objs[i]->data;
 			//  get the actual record
@@ -426,7 +425,6 @@ void OpenSCToken::populate()
 	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_PRKEY_RSA, objs, 32);
 	sc_debug(mScCtx, "  sc_pkcs15_get_objects(TYPE_PRKEY_RSA): %d\n", r);
 	if (r >= 0) {
-		r = 1;									  // Apple can really handle only a single certificate and PIN
 		for (i = 0; i < r; i++) {
 			sc_pkcs15_prkey_info_t *prkey_info = (sc_pkcs15_prkey_info_t *) objs[i]->data;
 			RefPointer<Tokend::Record> record(
@@ -458,7 +456,6 @@ void OpenSCToken::populate()
 	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_AUTH_PIN, objs, 32);
 	sc_debug(mScCtx, "  sc_pkcs15_get_objects(TYPE_AUTH_PIN): %d\n", r);
 	if (r>0) {
-		r = 1;									  // Apple can really handle only a single certificate and PIN
 		for (i = 0; i < r; i++) {
 			sc_pkcs15_pin_info *pin_info = (sc_pkcs15_pin_info *) objs[i]->data;
 			if ((pin_info->flags & SC_PKCS15_PIN_FLAG_SO_PIN) ||
