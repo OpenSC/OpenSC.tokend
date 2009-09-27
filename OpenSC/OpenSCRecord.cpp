@@ -94,6 +94,11 @@ void OpenSCCertificateRecord::getAcl(const char *tag, uint32 &count, AclEntryInf
 	sc_debug(mToken->mScCtx, "  returned %d ACL entries\n", count);
 }
 
+size_t OpenSCKeyRecord::sizeInBits() const
+{
+	sc_pkcs15_prkey_info *prkey = (sc_pkcs15_prkey_info *)mPrKeyObj->data;
+	return prkey->modulus_length;
+}
 
 /************************** OpenSCKeyRecord *****************************/
 
