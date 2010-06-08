@@ -34,8 +34,8 @@
 #include "MetaAttribute.h"
 #include "MetaRecord.h"
 #include "Attribute.h"
-#include <opensc/pkcs15.h>
-#include <opensc/log.h>
+#include "libopensc/pkcs15.h"
+#include "libopensc/log.h"
 #include <Security/SecKey.h>
 
 using namespace Tokend;
