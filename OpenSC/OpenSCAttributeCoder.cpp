@@ -79,13 +79,13 @@ Tokend::Record &record)
 				value = pubkey->modulus_length;
 			}
 			else {
-				sc_debug(token_obj.mScCtx, "Unknown keyObj type: %d\n", keyObj->type);
+				sc_debug(token_obj.mScCtx, SC_LOG_DEBUG_NORMAL, "Unknown keyObj type: %d\n", keyObj->type);
 			}
 			record.attributeAtIndex(metaAttribute.attributeIndex(), new Attribute((uint32)value));
 			break;
 
 		default:
-			sc_debug(token_obj.mScCtx, "Unknown AttributeID: %d\n",attrId);
+			sc_debug(token_obj.mScCtx, SC_LOG_DEBUG_NORMAL, "Unknown AttributeID: %d\n",attrId);
 			break;
 	}
 }
