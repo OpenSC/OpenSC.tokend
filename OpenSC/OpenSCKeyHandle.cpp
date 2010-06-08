@@ -31,7 +31,7 @@
 #include <security_cdsa_utilities/cssmerrors.h>
 #include <Security/cssmerr.h>
 
-#include <opensc/log.h>
+#include "libopensc/log.h"
 /************************** OpenSCKeyHandle ************************/
 
 OpenSCKeyHandle::OpenSCKeyHandle(OpenSCToken &OpenSCToken,
@@ -39,7 +39,7 @@ const Tokend::MetaRecord &metaRecord, OpenSCKeyRecord &cacKey) :
 Tokend::KeyHandle(metaRecord, &cacKey),
 mToken(OpenSCToken), mKey(cacKey)
 {
-	sc_debug(mToken.mScCtx, "In OpenSCKeyHandle:: OpenSCKeyHandle()\n");
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCKeyHandle:: OpenSCKeyHandle()\n");
 }
 
 
@@ -50,7 +50,7 @@ OpenSCKeyHandle::~OpenSCKeyHandle()
 
 void OpenSCKeyHandle::getKeySize(CSSM_KEY_SIZE &keySize)
 {
-	sc_debug(mToken.mScCtx, "In OpenSCKeyHandle::getKeySize()\n", keySize);
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCKeyHandle::getKeySize()\n", keySize);
 	secdebug("crypto", "getKeySize");
 	CssmError::throwMe(CSSM_ERRCODE_FUNCTION_NOT_IMPLEMENTED);
 }
@@ -59,7 +59,7 @@ void OpenSCKeyHandle::getKeySize(CSSM_KEY_SIZE &keySize)
 uint32 OpenSCKeyHandle::getOutputSize(const Context &context,
 uint32 inputSize, bool encrypting)
 {
-	sc_debug(mToken.mScCtx, "In OpenSCKeyHandle::geOutputSize()\n");
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCKeyHandle::geOutputSize()\n");
 	secdebug("crypto", "getOutputSize");
 	CssmError::throwMe(CSSM_ERRCODE_FUNCTION_NOT_IMPLEMENTED);
 	return 0;
@@ -72,21 +72,21 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 	// for sc_pkcs15_compute_signature()
 	unsigned int flags = 0;
 
-	sc_debug(mToken.mScCtx, "In OpenSCKeyHandle::generateSignature()\n");
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCKeyHandle::generateSignature()\n");
 
 	if (context.type() == CSSM_ALGCLASS_SIGNATURE) {
-		sc_debug(mToken.mScCtx, "  type == CSSM_ALGCLASS_SIGNATURE\n");
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  type == CSSM_ALGCLASS_SIGNATURE\n");
 	}
 	else {
-		sc_debug(mToken.mScCtx, "  Unknown type: 0x%0x, exiting\n", context.type());
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Unknown type: 0x%0x, exiting\n", context.type());
 		CssmError::throwMe(CSSMERR_CSP_INVALID_CONTEXT);
 	}
 
 	if (context.algorithm() == CSSM_ALGID_RSA) {
-		sc_debug(mToken.mScCtx, "  algorithm == CSSM_ALGID_RSA\n");
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  algorithm == CSSM_ALGID_RSA\n");
 	}
 	else {
-		sc_debug(mToken.mScCtx, "  Unknown algorithm: 0x%0x, exiting\n", context.algorithm());
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Unknown algorithm: 0x%0x, exiting\n", context.algorithm());
 		CssmError::throwMe(CSSMERR_CSP_INVALID_ALGORITHM);
 	}
 
@@ -95,21 +95,21 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		if (input.Length != 20)
 			CssmError::throwMe(CSSMERR_CSP_BLOCK_SIZE_MISMATCH);
 		flags |= SC_ALGORITHM_RSA_HASH_SHA1;
-		sc_debug(mToken.mScCtx, "  Using SHA1, length is 20\n");
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Using SHA1, length is 20\n");
 	}
 	else if (signOnly == CSSM_ALGID_MD5) {
 		if (input.Length != 16)
 			CssmError::throwMe(CSSMERR_CSP_BLOCK_SIZE_MISMATCH);
 		flags |= SC_ALGORITHM_RSA_HASH_MD5;
-		sc_debug(mToken.mScCtx, "  Using MD5, length is 16\n");
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Using MD5, length is 16\n");
 
 	}
 	else if (signOnly == CSSM_ALGID_NONE) {
-		sc_debug(mToken.mScCtx, "  NO digest (perhaps for SSL authentication)\n");
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  NO digest (perhaps for SSL authentication)\n");
 		flags |= SC_ALGORITHM_RSA_HASH_NONE;
 	}
 	else {
-		sc_debug(mToken.mScCtx, "  Unknown signOnly value: 0x%0x, exiting\n", signOnly);
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Unknown signOnly value: 0x%0x, exiting\n", signOnly);
 		CssmError::throwMe(CSSMERR_CSP_INVALID_DIGEST_ALGORITHM);
 	}
 
@@ -118,14 +118,14 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 	context.getInt(CSSM_ATTRIBUTE_PADDING, padding);
 
 	if (padding == CSSM_PADDING_PKCS1) {
-		sc_debug(mToken.mScCtx, "  PKCS#1 padding\n");
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  PKCS#1 padding\n");
 		flags |= SC_ALGORITHM_RSA_PAD_PKCS1;
 	}
 	else if (padding == CSSM_PADDING_NONE) {
-		sc_debug(mToken.mScCtx, "  NO padding\n");
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  NO padding\n");
 	}
 	else {
-		sc_debug(mToken.mScCtx, "  Unknown padding 0x%0x, exiting\n", padding);
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Unknown padding 0x%0x, exiting\n", padding);
 		CssmError::throwMe(CSSMERR_CSP_INVALID_ATTR_PADDING);
 	}
 
@@ -136,11 +136,11 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 	if (outputData == NULL)
 		CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
 
-	sc_debug(mToken.mScCtx, "  Signing buffers: inlen=%d, outlen=%d\n",input.Length, keyLength);
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Signing buffers: inlen=%d, outlen=%d\n",input.Length, keyLength);
 	// Call OpenSC to do the actual signing
 	int rv = sc_pkcs15_compute_signature(mToken.mScP15Card,
-		mKey.object(), flags, input.Data, input.Length, outputData, keyLength);
-	sc_debug(mToken.mScCtx, "  sc_pkcs15_compute_signature(): rv = %d\n", rv);
+		mKey.signKey(), flags, input.Data, input.Length, outputData, keyLength);
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_compute_signature(): rv = %d\n", rv);
 	if (rv < 0) {
 		free(outputData);
 		CssmError::throwMe(CSSMERR_CSP_FUNCTION_FAILED);
@@ -186,7 +186,7 @@ void OpenSCKeyHandle::decrypt(const Context &context,
 const CssmData &cipher, CssmData &clear)
 {
 	secdebug("crypto", "decrypt alg: %lu", (long unsigned int) context.algorithm());
-	sc_debug(mToken.mScCtx, "In OpenSCKeyHandle::decrypt(ciphertext length = %d)\n", cipher.Length);
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCKeyHandle::decrypt(ciphertext length = %d)\n", cipher.Length);
 
 	if (context.type() != CSSM_ALGCLASS_ASYMMETRIC)
 		CssmError::throwMe(CSSMERR_CSP_INVALID_CONTEXT);
@@ -202,9 +202,9 @@ const CssmData &cipher, CssmData &clear)
 
 	// Call OpenSC to do the actual decryption
 	int rv = sc_pkcs15_decipher(mToken.mScP15Card,
-		mKey.object(), SC_ALGORITHM_RSA_PAD_PKCS1,
+		mKey.decryptKey(), SC_ALGORITHM_RSA_PAD_PKCS1,
 		cipher.Data, cipher.Length, outputData, cipher.Length);
-	sc_debug(mToken.mScCtx, "  sc_pkcs15_decipher(): rv = %d\n", rv);
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_decipher(): rv = %d\n", rv);
 	if (rv < 0) {
 		free(outputData);
 		CssmError::throwMe(CSSMERR_CSP_FUNCTION_FAILED);
@@ -212,14 +212,14 @@ const CssmData &cipher, CssmData &clear)
 	clear.Data = outputData;
 	clear.Length = rv;
 
-	sc_debug(mToken.mScCtx, "  decrypt(): returning with %d decrypted bytes%d\n", clear.Length);
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  decrypt(): returning with %d decrypted bytes%d\n", clear.Length);
 }
 
 
 void OpenSCKeyHandle::exportKey(const Context &context,
 const AccessCredentials *cred, CssmKey &wrappedKey)
 {
-	sc_debug(mToken.mScCtx, "exportKey");
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "exportKey");
 	CssmError::throwMe(CSSM_ERRCODE_FUNCTION_NOT_IMPLEMENTED);
 }
 

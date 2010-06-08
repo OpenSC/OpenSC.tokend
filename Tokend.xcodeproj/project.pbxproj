@@ -67,8 +67,6 @@
 		5B59A2870F431A9E003CD203 /* OpenSCSchema.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B59A2780F431A9E003CD203 /* OpenSCSchema.cpp */; };
 		5B59A2880F431A9E003CD203 /* OpenSCToken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B59A27A0F431A9E003CD203 /* OpenSCToken.cpp */; };
 		5B59A28C0F431ACB003CD203 /* libopensc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B59A2890F431ACB003CD203 /* libopensc.dylib */; };
-		5B59A28D0F431ACB003CD203 /* libpkcs15init.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B59A28A0F431ACB003CD203 /* libpkcs15init.dylib */; };
-		5B59A28E0F431ACB003CD203 /* libscconf.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B59A28B0F431ACB003CD203 /* libscconf.dylib */; };
 		5BB2875410049F3200F41103 /* OpenSCAttributeCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2875210049F3200F41103 /* OpenSCAttributeCoder.cpp */; };
 /* End PBXBuildFile section */
 
@@ -173,8 +171,6 @@
 		5B59A27A0F431A9E003CD203 /* OpenSCToken.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenSCToken.cpp; sourceTree = "<group>"; };
 		5B59A27B0F431A9E003CD203 /* OpenSCToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSCToken.h; sourceTree = "<group>"; };
 		5B59A2890F431ACB003CD203 /* libopensc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopensc.dylib; path = /Library/OpenSC/lib/libopensc.dylib; sourceTree = "<absolute>"; };
-		5B59A28A0F431ACB003CD203 /* libpkcs15init.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpkcs15init.dylib; path = /Library/OpenSC/lib/libpkcs15init.dylib; sourceTree = "<absolute>"; };
-		5B59A28B0F431ACB003CD203 /* libscconf.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libscconf.dylib; path = /Library/OpenSC/lib/libscconf.dylib; sourceTree = "<absolute>"; };
 		5BB2875210049F3200F41103 /* OpenSCAttributeCoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenSCAttributeCoder.cpp; sourceTree = "<group>"; };
 		5BB2875310049F3200F41103 /* OpenSCAttributeCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSCAttributeCoder.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -186,8 +182,6 @@
 			files = (
 				5B59A25B0F4319FB003CD203 /* CoreFoundation.framework in Frameworks */,
 				5B59A28C0F431ACB003CD203 /* libopensc.dylib in Frameworks */,
-				5B59A28D0F431ACB003CD203 /* libpkcs15init.dylib in Frameworks */,
-				5B59A28E0F431ACB003CD203 /* libscconf.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,8 +256,6 @@
 			isa = PBXGroup;
 			children = (
 				5B59A2890F431ACB003CD203 /* libopensc.dylib */,
-				5B59A28A0F431ACB003CD203 /* libpkcs15init.dylib */,
-				5B59A28B0F431ACB003CD203 /* libscconf.dylib */,
 				4CBF5CBE0704E76200EEADC2 /* libz.dylib */,
 			);
 			name = "External Libraries";
@@ -785,7 +777,7 @@
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				HEADER_SEARCH_PATHS = /Library/OpenSC/include;
+				HEADER_SEARCH_PATHS = "$(HOME)/OpenSC/src";
 				INFOPLIST_FILE = OpenSC/Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Security/tokend";
 				LIBRARY_SEARCH_PATHS = /Library/OpenSC/lib;

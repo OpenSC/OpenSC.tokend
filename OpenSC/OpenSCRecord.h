@@ -26,8 +26,8 @@
 
 #include "Record.h"
 #include "OpenSCToken.h"
-#include <opensc/opensc.h>
-#include <opensc/pkcs15.h>
+#include "libopensc/opensc.h"
+#include "libopensc/pkcs15.h"
 #include <security_cdsa_utilities/cssmcred.h>
 
 class OpenSCToken;
@@ -67,15 +67,21 @@ class OpenSCKeyRecord : public OpenSCRecord
 		public:
 		OpenSCKeyRecord(OpenSCToken *openSCToken, const sc_pkcs15_object_t *object,
 			const Tokend::MetaRecord &metaRecord);
+		OpenSCKeyRecord(OpenSCToken *openSCToken,
+			const sc_pkcs15_object_t *objectOne,
+			const sc_pkcs15_object_t *objectTwo,
+			const Tokend::MetaRecord &metaRecord);
 		~OpenSCKeyRecord() {}
 
-		size_t sizeInBits() const { return 1048; }
+		size_t sizeInBits() const;
 
+		const sc_pkcs15_object_t * signKey() { return mPrKeySign; }
+		const sc_pkcs15_object_t * decryptKey() { return mPrKeyDecrypt; }
 		virtual void getOwner(AclOwnerPrototype &owner);
 		virtual void getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls);
 
 	private:
-		const sc_pkcs15_object_t *mPrKeyObj;
+		const sc_pkcs15_object_t *mPrKeyObj, *mPrKeySign, *mPrKeyDecrypt;
 		AutoAclOwnerPrototype mAclOwner;
 		AutoAclEntryInfoList mAclEntries;
 };

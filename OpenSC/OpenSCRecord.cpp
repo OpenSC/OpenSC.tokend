@@ -29,7 +29,7 @@
 #include "MetaRecord.h"
 #include <security_cdsa_client/aclclient.h>
 #include <Security/SecKey.h>
-#include <opensc/log.h>
+#include "libopensc/log.h"
 
 /**************************** OpenSCRecord *******************************/
 
@@ -65,7 +65,7 @@ Tokend::TokenContext *tokenContext)
 
 	int r = sc_pkcs15_read_certificate(openSCToken.mScP15Card, mCertInfo, &cert);
 
-	sc_debug(mToken->mScCtx, "OpenSCCertificateRecord::getDataAttribute(): sc_pkcs15_read_certificate(): %d\n", r);
+	sc_debug(mToken->mScCtx, SC_LOG_DEBUG_NORMAL, "OpenSCCertificateRecord::getDataAttribute(): sc_pkcs15_read_certificate(): %d\n", r);
 	Tokend::Attribute *attrib = NULL;
 	// if we found it, cache it!
 	if (r==0) {
@@ -81,7 +81,7 @@ Tokend::TokenContext *tokenContext)
 
 void OpenSCCertificateRecord::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls)
 {
-	sc_debug(mToken->mScCtx, "In OpenSCCertificateRecord::getAcl, tag is: %s\n", tag);
+	sc_debug(mToken->mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCCertificateRecord::getAcl, tag is: %s\n", tag);
 	if (!mAclEntries) {
 		mAclEntries.allocator(Allocator::standard());
 		// certificates are for public inspection
@@ -91,7 +91,7 @@ void OpenSCCertificateRecord::getAcl(const char *tag, uint32 &count, AclEntryInf
 	}
 	count = mAclEntries.size();
 	acls = mAclEntries.entries();
-	sc_debug(mToken->mScCtx, "  returned %d ACL entries\n", count);
+	sc_debug(mToken->mScCtx, SC_LOG_DEBUG_NORMAL, "  returned %d ACL entries\n", count);
 }
 
 size_t OpenSCKeyRecord::sizeInBits() const
@@ -114,13 +114,47 @@ OpenSCRecord(openSCToken, object)
 	attributeAtIndex(metaRecord.metaAttribute(kSecKeySign).attributeIndex(),
 		new Tokend::Attribute(true));
 	mToken = openSCToken;
-	mPrKeyObj = object;
+	mPrKeyObj = mPrKeySign = mPrKeyDecrypt = object;
 }
 
+OpenSCKeyRecord::OpenSCKeyRecord(OpenSCToken *openSCToken,
+								 const sc_pkcs15_object_t *objectOne,
+								 const sc_pkcs15_object_t *objectTwo,
+								 const Tokend::MetaRecord &metaRecord) :
+OpenSCRecord(openSCToken, objectOne)
+{
+	int decryptFlags	= SC_PKCS15_PRKEY_USAGE_DECRYPT
+						| SC_PKCS15_PRKEY_USAGE_UNWRAP;
+	
+	int signFlags		= SC_PKCS15_PRKEY_USAGE_SIGN
+						| SC_PKCS15_PRKEY_USAGE_SIGNRECOVER
+						| SC_PKCS15_PRKEY_USAGE_NONREPUDIATION;
+	
+	sc_pkcs15_prkey_info_t	*kOne = (sc_pkcs15_prkey_info_t *) objectOne->data;
+	sc_pkcs15_prkey_info_t	*kTwo = (sc_pkcs15_prkey_info_t *) objectTwo->data;
+	
+	// find out key attributes!
+	attributeAtIndex(metaRecord.metaAttribute(kSecKeyDecrypt).attributeIndex(),
+					 new Tokend::Attribute(true));
+	attributeAtIndex(metaRecord.metaAttribute(kSecKeyUnwrap).attributeIndex(),
+					 new Tokend::Attribute(true));
+	attributeAtIndex(metaRecord.metaAttribute(kSecKeySign).attributeIndex(),
+					 new Tokend::Attribute(true));
+	mToken = openSCToken;
+	if ((kOne->usage & signFlags) && (kTwo->usage & decryptFlags)) {
+		mPrKeySign = objectOne;
+		mPrKeyDecrypt = objectTwo;
+	} else if ((kOne->usage & decryptFlags) && (kTwo->usage & signFlags)) {
+		mPrKeySign = objectTwo;
+		mPrKeyDecrypt = objectOne;
+	} else
+		PCSC::Error::throwMe(CSSM_ERRCODE_INTERNAL_ERROR);
+	mPrKeyObj = objectOne; // Could be objectTwo also, since both keys share the same attributes
+}
 
 void OpenSCKeyRecord::getOwner(AclOwnerPrototype &owner)
 {
-	sc_debug(mToken->mScCtx, "In OpenSCKeyRecord::getOwner()\n");
+	sc_debug(mToken->mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCKeyRecord::getOwner()\n");
 	// we claim we're owned by PIN #1
 	if (!mAclOwner) {
 		mAclOwner.allocator(Allocator::standard());
@@ -132,11 +166,11 @@ void OpenSCKeyRecord::getOwner(AclOwnerPrototype &owner)
 
 void OpenSCKeyRecord::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls)
 {
-	sc_debug(mToken->mScCtx, "In OpenSCKeyRecord::getAcl, tag is: %s\n", tag);
+	sc_debug(mToken->mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCKeyRecord::getAcl, tag is: %s\n", tag);
 	if (!mAclEntries) {
 		mAclEntries.allocator(Allocator::standard());
 		// Anyone can read the DB record for this key (which is a reference CSSM_KEY)
-		sc_debug(mToken->mScCtx, "DB read for a reference key object is always OK\n");
+		sc_debug(mToken->mScCtx, SC_LOG_DEBUG_NORMAL, "DB read for a reference key object is always OK\n");
 		// Anyone can read the DB record for this key (which is a reference
 		// CSSM_KEY)
 		mAclEntries.add(CssmClient::AclFactory::AnySubject(
@@ -147,22 +181,53 @@ void OpenSCKeyRecord::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls
 		// so when OpenSCToken::verifyPIN() is called with this pinNum, we know which
 		// PIN we have to verify
 		int pinNum = mToken->getRefFromPinMap(&mPrKeyObj->auth_id);
-		sc_debug(mToken->mScCtx, "  auth_id for PIN: %s, pinNum = %d\n",
+		sc_debug(mToken->mScCtx, SC_LOG_DEBUG_NORMAL, "  auth_id for PIN: %s, pinNum = %d\n",
 			sc_pkcs15_print_id(&mPrKeyObj->auth_id), pinNum);
 		if (pinNum != -1) {
 			char tmptag[20];
-			snprintf(tmptag, sizeof(tmptag), "PIN%d", pinNum);
-			mAclEntries.add(CssmClient::AclFactory::PinSubject(
-				mAclEntries.allocator(), pinNum),
-				AclAuthorizationSet(CSSM_ACL_AUTHORIZATION_ENCRYPT,
-				CSSM_ACL_AUTHORIZATION_DECRYPT,
-				CSSM_ACL_AUTHORIZATION_SIGN,
-				CSSM_ACL_AUTHORIZATION_MAC,
-				CSSM_ACL_AUTHORIZATION_DERIVE,
-				0), tmptag);
+			
+			// This is hardcoded for now.
+			// Apparently, more than one PIN slot is not supported.
+			snprintf(tmptag, sizeof(tmptag), "PIN%d", 1);
+			
+			if(mObject->user_consent) {
+				// PIN for this key must be entered every time
+				// This will be used for user consent keys like the non repudiation keys
+				// from national eID cards)
+				AclAuthorizationSet aclAuthSet = AclAuthorizationSet(CSSM_ACL_AUTHORIZATION_SIGN, 0);
+				
+				CssmData prompt;
+				mAclEntries.add(CssmClient::AclFactory::PromptPWSubject(mAclEntries.allocator(), prompt),
+								AclAuthorizationSet(CSSM_ACL_AUTHORIZATION_SIGN,
+													0), tmptag);
+
+			} else if (pinNum == 1) {
+				// PIN needs to be entered only once if this key is associated with PIN #1
+				// and doesn't have the user consent bit set
+				mAclEntries.add(CssmClient::AclFactory::PinSubject(mAclEntries.allocator(), pinNum),
+								AclAuthorizationSet(CSSM_ACL_AUTHORIZATION_ENCRYPT,
+													CSSM_ACL_AUTHORIZATION_DECRYPT,
+													CSSM_ACL_AUTHORIZATION_SIGN,
+													CSSM_ACL_AUTHORIZATION_MAC,
+													CSSM_ACL_AUTHORIZATION_DERIVE,
+													0), tmptag);
+			} else {
+				// All other keys without the user consent bit set.
+				// This is just a temporary workaround, until proper PIN slots are supported.
+				CssmData prompt;
+				mAclEntries.add(CssmClient::AclFactory::PromptPWSubject(mAclEntries.allocator(), prompt),
+								AclAuthorizationSet(CSSM_ACL_AUTHORIZATION_ENCRYPT,
+													CSSM_ACL_AUTHORIZATION_DECRYPT,
+													CSSM_ACL_AUTHORIZATION_SIGN,
+													CSSM_ACL_AUTHORIZATION_MAC,
+													CSSM_ACL_AUTHORIZATION_DERIVE,
+													0), tmptag);
+			}
 		}
 	}
 	count = mAclEntries.size();
 	acls = mAclEntries.entries();
-	sc_debug(mToken->mScCtx, "  retuning %d ACL entries\n", count);
+	// Notify the tokend object with the PIN it should verify
+	mToken->setCurrentPIN(mToken->getRefFromPinMap(&mPrKeyObj->auth_id));
+	sc_debug(mToken->mScCtx, SC_LOG_DEBUG_NORMAL, "  retuning %d ACL entries\n", count);
 }

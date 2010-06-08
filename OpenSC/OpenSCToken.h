@@ -32,9 +32,9 @@
 #include <Token.h>
 #include "TokenContext.h"
 
-#include "opensc/opensc.h"
-#include "opensc/pkcs15.h"
-#include "opensc/errors.h"
+#include "libopensc/opensc.h"
+#include "libopensc/pkcs15.h"
+#include "libopensc/errors.h"
 
 #include <security_utilities/pcsc++.h>
 
@@ -81,6 +81,8 @@ class OpenSCToken : public Tokend::ISO7816Token
 		int getRefFromPinMap(const sc_pkcs15_id_t *id);
 		const sc_pkcs15_id_t * getIdFromPinMap(int pinNum);
 
+		// Workaround for the multiple PIN slots issue
+		void setCurrentPIN(int pinNum) { mCurrentPIN = pinNum; }
 	public:
 		sc_context_t *mScCtx;
 		sc_card_t *mScCard;
@@ -92,6 +94,8 @@ class OpenSCToken : public Tokend::ISO7816Token
 		AutoAclOwnerPrototype mAclOwner;
 		AutoAclEntryInfoList mAclEntries;
 		bool mLocked;
+		// temporary workaround for multiple PINs - to be removed
+		int mCurrentPIN;
 
 		map<int, const sc_pkcs15_id_t *> mPinMap;
 		int mPinCount;
