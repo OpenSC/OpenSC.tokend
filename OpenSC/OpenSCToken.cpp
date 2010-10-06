@@ -258,10 +258,10 @@ char tokenUid[TOKEND_MAX_UID])
 						sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  Get Score from config file: %d\n", score);
 					}
 					// Create a tokenUid
-					if (mScP15Card->label != NULL)
-						strlcpy(tokenUid, mScP15Card->label, TOKEND_MAX_UID);
-					if (mScP15Card->serial_number != NULL)
-						strlcpy(tokenUid + strlen(tokenUid), mScP15Card->serial_number,
+					if (mScP15Card->tokeninfo->label != NULL)
+						strlcpy(tokenUid, mScP15Card->tokeninfo->label, TOKEND_MAX_UID);
+					if (mScP15Card->tokeninfo->serial_number != NULL)
+						strlcpy(tokenUid + strlen(tokenUid), mScP15Card->tokeninfo->serial_number,
 							TOKEND_MAX_UID - strlen(tokenUid));
 
 					{
@@ -306,8 +306,8 @@ char printName[PATH_MAX])
 
 	populate();
 
-	if (mScP15Card->label)
-		strcpy(printName, mScP15Card->label);
+	if (mScP15Card->tokeninfo->label)
+		strcpy(printName, mScP15Card->tokeninfo->label);
 	else
 		strcpy(printName,"OpenSC Token");
 
