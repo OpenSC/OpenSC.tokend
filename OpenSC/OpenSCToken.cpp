@@ -252,7 +252,7 @@ char tokenUid[TOKEND_MAX_UID])
 					// get the score
 					scconf_block *conf_block = NULL;
 					conf_block = sc_get_conf_block(mScCtx, "framework", "tokend", 1);
-					score = 50;
+					score = 300;
 					if (conf_block != NULL) {
 						score = scconf_get_int(conf_block, "score", score);
 						sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  Get Score from config file: %d\n", score);
