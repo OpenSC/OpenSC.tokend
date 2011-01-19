@@ -246,7 +246,7 @@ char tokenUid[TOKEND_MAX_UID])
 			}
 			else {
 				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  card: %s\n", mScCard->name);
-				r = sc_pkcs15_bind(mScCard, &mScP15Card);
+				r = sc_pkcs15_bind(mScCard, NULL, &mScP15Card);
 				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_bind(): %d\n", r);
 				if (r == 0) {
 					// get the score
