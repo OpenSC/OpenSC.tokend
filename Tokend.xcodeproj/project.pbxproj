@@ -55,6 +55,7 @@
 		52B2605A0BC5A864007E00F1 /* SelectionPredicate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C134AA506DBF81800FA17D9 /* SelectionPredicate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		52B2605B0BC5A864007E00F1 /* Token.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C134A9106DBF81800FA17D9 /* Token.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		52B2605C0BC5A864007E00F1 /* TokenContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C134A9306DBF81800FA17D9 /* TokenContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B51D6F613041C4500D7135F /* libopensc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B51D6F513041C4500D7135F /* libopensc.dylib */; };
 		5B59A25B0F4319FB003CD203 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA8C4D606D6D19400F1BCC8 /* CoreFoundation.framework */; };
 		5B59A27D0F431A9E003CD203 /* opensc_csp_capabilities.mdsinfo in Resources */ = {isa = PBXBuildFile; fileRef = 5B59A26A0F431A9E003CD203 /* opensc_csp_capabilities.mdsinfo */; };
 		5B59A27E0F431A9E003CD203 /* opensc_csp_capabilities_common.mds in Resources */ = {isa = PBXBuildFile; fileRef = 5B59A26B0F431A9E003CD203 /* opensc_csp_capabilities_common.mds */; };
@@ -66,7 +67,6 @@
 		5B59A2860F431A9E003CD203 /* OpenSCRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B59A2760F431A9E003CD203 /* OpenSCRecord.cpp */; };
 		5B59A2870F431A9E003CD203 /* OpenSCSchema.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B59A2780F431A9E003CD203 /* OpenSCSchema.cpp */; };
 		5B59A2880F431A9E003CD203 /* OpenSCToken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B59A27A0F431A9E003CD203 /* OpenSCToken.cpp */; };
-		5B59A28C0F431ACB003CD203 /* libopensc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B59A2890F431ACB003CD203 /* libopensc.dylib */; };
 		5BB2875410049F3200F41103 /* OpenSCAttributeCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2875210049F3200F41103 /* OpenSCAttributeCoder.cpp */; };
 /* End PBXBuildFile section */
 
@@ -154,7 +154,8 @@
 		52CA8343067E8175005A1EBA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Security.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		52DE698106E93B870024EA03 /* PKCS11Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PKCS11Object.h; sourceTree = "<group>"; };
 		52DE698206E93B870024EA03 /* PKCS11Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PKCS11Object.cpp; sourceTree = "<group>"; };
-		5B59A25F0F4319FB003CD203 /* OpenSC.tokend */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenSC.tokend; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B51D6F513041C4500D7135F /* libopensc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopensc.dylib; path = opensc-src/libopensc/.libs/libopensc.dylib; sourceTree = SOURCE_ROOT; };
+		5B51D6F713041C4500D7135F /* BELPIC.tokend */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BELPIC.tokend; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B59A2680F431A9E003CD203 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5B59A26A0F431A9E003CD203 /* opensc_csp_capabilities.mdsinfo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = opensc_csp_capabilities.mdsinfo; sourceTree = "<group>"; };
 		5B59A26B0F431A9E003CD203 /* opensc_csp_capabilities_common.mds */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = opensc_csp_capabilities_common.mds; sourceTree = "<group>"; };
@@ -170,7 +171,6 @@
 		5B59A2790F431A9E003CD203 /* OpenSCSchema.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSCSchema.h; sourceTree = "<group>"; };
 		5B59A27A0F431A9E003CD203 /* OpenSCToken.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenSCToken.cpp; sourceTree = "<group>"; };
 		5B59A27B0F431A9E003CD203 /* OpenSCToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSCToken.h; sourceTree = "<group>"; };
-		5B59A2890F431ACB003CD203 /* libopensc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopensc.dylib; path = /Library/OpenSC/lib/libopensc.dylib; sourceTree = "<absolute>"; };
 		5BB2875210049F3200F41103 /* OpenSCAttributeCoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenSCAttributeCoder.cpp; sourceTree = "<group>"; };
 		5BB2875310049F3200F41103 /* OpenSCAttributeCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSCAttributeCoder.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -181,7 +181,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B59A25B0F4319FB003CD203 /* CoreFoundation.framework in Frameworks */,
-				5B59A28C0F431ACB003CD203 /* libopensc.dylib in Frameworks */,
+				5B51D6F613041C4500D7135F /* libopensc.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,7 +206,7 @@
 			children = (
 				52B2604A0BC5A864007E00F1 /* libtokend.a */,
 				52B260630BC5A864007E00F1 /* tokend.framework */,
-				5B59A25F0F4319FB003CD203 /* OpenSC.tokend */,
+				5B51D6F713041C4500D7135F /* BELPIC.tokend */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -255,7 +255,7 @@
 		4C415098073061D6004C9490 /* External Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				5B59A2890F431ACB003CD203 /* libopensc.dylib */,
+				5B51D6F513041C4500D7135F /* libopensc.dylib */,
 				4CBF5CBE0704E76200EEADC2 /* libz.dylib */,
 			);
 			name = "External Libraries";
@@ -384,7 +384,7 @@
 			);
 			name = OpenSC;
 			productName = "Common Access Card";
-			productReference = 5B59A25F0F4319FB003CD203 /* OpenSC.tokend */;
+			productReference = 5B51D6F713041C4500D7135F /* BELPIC.tokend */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -394,7 +394,14 @@
 			isa = PBXProject;
 			buildConfigurationList = C27AD2220987FCDC001272E0 /* Build configuration list for PBXProject "Tokend" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* TokendMuscle */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -731,8 +738,10 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(LOCAL_LIBRARY_DIR)/OpenSC/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../src/libopensc/.libs\"";
 				OPT_CPPXFLAGS = "$(OPT_CXFLAGS) -fno-enforce-eh-specs -fno-implement-inlines";
 				OPT_CXFLAGS = "-DNDEBUG $(OPT_INLINEXFLAGS)";
 				OPT_INLINEXFLAGS = " -finline-functions";
@@ -780,7 +789,11 @@
 				HEADER_SEARCH_PATHS = "$(BUILD_DIR)/opensc-src";
 				INFOPLIST_FILE = OpenSC/Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Security/tokend";
-				LIBRARY_SEARCH_PATHS = /Library/OpenSC/lib;
+				LIBRARY_SEARCH_PATHS = (
+					/Library/OpenSC/lib,
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../src/libopensc/.libs\"";
 				OPT_CPPXFLAGS = "$(OPT_CXFLAGS) -fno-enforce-eh-specs -fno-implement-inlines";
 				OPT_CXFLAGS = "-DNDEBUG $(OPT_INLINEXFLAGS)";
 				OPT_INLINEXFLAGS = " -finline-functions";
