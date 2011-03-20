@@ -790,8 +790,8 @@
 				INFOPLIST_FILE = OpenSC/Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Security/tokend";
 				LIBRARY_SEARCH_PATHS = (
-					/Library/OpenSC/lib,
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					/Library/OpenSC/lib,
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../src/libopensc/.libs\"";
 				OPT_CPPXFLAGS = "$(OPT_CXFLAGS) -fno-enforce-eh-specs -fno-implement-inlines";
