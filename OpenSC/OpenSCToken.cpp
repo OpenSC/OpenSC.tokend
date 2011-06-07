@@ -108,8 +108,8 @@ const unsigned char *newPin, size_t newPinLength )
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(pin_id=%s): %d\n", sc_pkcs15_print_id(auth_id),  r);
 	if (r >= 0) {
 		for (i = 0; i < r; i++) {
-			sc_pkcs15_pin_info_t *pin_info = (sc_pkcs15_pin_info_t *) objs[i]->data;
-			if (sc_pkcs15_compare_id(auth_id, &pin_info->auth_id)) {
+			sc_pkcs15_auth_info_t *auth_info = (sc_pkcs15_auth_info_t *) objs[i]->data;
+			if (sc_pkcs15_compare_id(auth_id, &auth_info->auth_id)) {
 
 				rv = sc_pkcs15_change_pin( mScP15Card, objs[i], oldPin, oldPinLength, newPin, newPinLength );
 				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  In OpenSCToken::sc_pkcs15_change_pin returned %d for pin %d\n", rv, pinNum );
@@ -182,9 +182,9 @@ bool OpenSCToken::_verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(pin_id=%s): %d\n", sc_pkcs15_print_id(auth_id),  r);
 	if (r >= 0) {
 		for (i = 0; i < r; i++) {
-			sc_pkcs15_pin_info_t *pin_info = (sc_pkcs15_pin_info_t *) objs[i]->data;
+			sc_pkcs15_auth_info_t *pin_info = (sc_pkcs15_auth_info_t *) objs[i]->data;
 			if (sc_pkcs15_compare_id(auth_id, &pin_info->auth_id)) {
-				rv = sc_pkcs15_verify_pin(mScP15Card, objs[i], pin,pinLength);
+				rv = sc_pkcs15_verify_pin(mScP15Card, objs[i], pin, pinLength);
 				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  In OpenSCToken::verify returned %d for pin %d\n", rv, pinNum);
 				if (rv==0)
 					return true;
@@ -498,9 +498,9 @@ void OpenSCToken::populate()
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(TYPE_AUTH_PIN): %d\n", r);
 	if (r>0) {
 		for (i = 0; i < r; i++) {
-			sc_pkcs15_pin_info *pin_info = (sc_pkcs15_pin_info *) objs[i]->data;
-			if ((pin_info->flags & SC_PKCS15_PIN_FLAG_SO_PIN) ||
-			(pin_info->flags & SC_PKCS15_PIN_FLAG_UNBLOCKING_PIN)) {
+			sc_pkcs15_auth_info_t *pin_info = (sc_pkcs15_auth_info_t *) objs[i]->data;
+			if ((pin_info->attrs.pin.flags & SC_PKCS15_PIN_FLAG_SO_PIN) ||
+			(pin_info->attrs.pin.flags & SC_PKCS15_PIN_FLAG_UNBLOCKING_PIN)) {
 				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    ignored non-user pin with ID=%s\n", sc_pkcs15_print_id(&pin_info->auth_id));
 				continue;
 			}
