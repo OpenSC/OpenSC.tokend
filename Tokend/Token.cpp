@@ -473,7 +473,7 @@ CSSM_RETURN Token::_deriveKey(const CSSM_CONTEXT *context,
 	const CSSM_ACCESS_CREDENTIALS *cred,
 	const CSSM_ACL_ENTRY_PROTOTYPE *access, CSSM_DATA *parameters,
 	CSSM_KEYUSE usage, CSSM_KEYATTR_FLAGS attributes,
-	CSSM_HANDLE *hKey, CSSM_KEY *key)
+	CSSM_HANDLE *hHandle, CSSM_KEY *key)
 {
 	BEGIN
 	secdebug("tokend", "deriveKey");

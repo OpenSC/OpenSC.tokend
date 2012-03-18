@@ -186,7 +186,7 @@ protected:
 		const CSSM_ACCESS_CREDENTIALS *cred, 
 		const CSSM_ACL_ENTRY_PROTOTYPE *access, CSSM_DATA *parameters,
 		CSSM_KEYUSE usage, CSSM_KEYATTR_FLAGS attributes,
-		CSSM_HANDLE *hKey, CSSM_KEY *hKey);
+		CSSM_HANDLE *hHandle, CSSM_KEY *hKey);
 
 	static CSSM_RETURN _getObjectOwner(CSSM_HANDLE hKey,
 		CSSM_ACL_OWNER_PROTOTYPE *owner);
