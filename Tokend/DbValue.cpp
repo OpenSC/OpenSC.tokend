@@ -234,15 +234,15 @@ TimeDateValue::isValidDate() const
 		return false;
 		
 	uint32 hour = rangeValue(8, 2);
-	if (hour < 0 || hour > 23)
+	if (hour > 23)
 		return false;
 		
 	uint32 minute = rangeValue(10, 2);
-	if (minute < 0 || minute > 59)
+	if (minute > 59)
 		return false;
 
 	uint32 second = rangeValue(12, 2);
-	if (second < 0 || second > 59)
+	if (second > 59)
 		return false;		
 
 	return true;
