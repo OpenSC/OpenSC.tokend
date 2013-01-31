@@ -57,7 +57,7 @@ Tokend::TokenContext *tokenContext)
 	// is it cached already?
 	if (openSCToken.cachedObject(0, mDescription, data)) {
 		Tokend::Attribute *attribute = new Tokend::Attribute(data.Data, data.Length);
-		free(data.Data);
+		delete[] data.Data;
 		return attribute;
 	}
 
@@ -69,8 +69,9 @@ Tokend::TokenContext *tokenContext)
 	Tokend::Attribute *attrib = NULL;
 	// if we found it, cache it!
 	if (r==0) {
-		data.Data = cert->data;
-		data.Length = cert->data_len;
+		data.Data = new u8[cert->data.len];
+		memcpy(data.Data, cert->data.value, cert->data.len);
+		data.Length = cert->data.len;
 		openSCToken.cacheObject(0, mDescription, data);
 		attrib = new Tokend::Attribute(data.Data, data.Length);
 		sc_pkcs15_free_certificate(cert);
