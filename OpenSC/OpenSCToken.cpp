@@ -32,8 +32,12 @@
 #include "OpenSCRecord.h"
 #include "OpenSCSchema.h"
 #include <security_cdsa_client/aclclient.h>
+#include <CommonCrypto/CommonDigest.h>
+
 #include <map>
 #include <vector>
+#include <sstream>
+#include <iomanip>
 
 using CssmClient::AclFactory;
 
@@ -257,22 +261,25 @@ char tokenUid[TOKEND_MAX_UID])
 						score = scconf_get_int(conf_block, "score", score);
 						sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  Get Score from config file: %d\n", score);
 					}
-					// Create a tokenUid
-					if (mScP15Card->tokeninfo->label != NULL)
-						strlcpy(tokenUid, mScP15Card->tokeninfo->label, TOKEND_MAX_UID);
-					if (mScP15Card->tokeninfo->serial_number != NULL)
-						strlcpy(tokenUid + strlen(tokenUid), mScP15Card->tokeninfo->serial_number,
-							TOKEND_MAX_UID - strlen(tokenUid));
 
-					{
-						/* replace non ASCII chars by '_' */
-						int i;
-						unsigned char *c = (unsigned char *)tokenUid;
+					// Create a tokenUid - obscure the label somewhat as it is under
+					// control of the card issuer; and could contain naughtyness.
+					//
+					unsigned char md[CC_SHA1_DIGEST_LENGTH];
+					CC_SHA1_CTX ctx;
+					CC_SHA1_Init(&ctx);
+					CC_SHA1_Update(&ctx, mScP15Card->tokeninfo->label,
+						strlen(mScP15Card->tokeninfo->label));
+					CC_SHA1_Update(&ctx, mScP15Card->tokeninfo->serial_number,
+						strlen(mScP15Card->tokeninfo->serial_number));
+					CC_SHA1_Final(md, &ctx);
 
-						for (i=0; tokenUid[i]; i++)
-							if (c[i] > 127)
-								tokenUid[i] = '_';
+					std::ostringstream out;
+					for (std::size_t i=0; i < MIN(TOKEND_MAX_UID/2,CC_SHA1_DIGEST_LENGTH); i++) {
+						out << std::setfill('0') << std::setw(2) << std::hex << (short) md[i];
 					}
+					strlcpy(tokenUid,out.str().c_str(),TOKEND_MAX_UID);
+
 					sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    score = %d, tokenUid = \"%s\"\n", score, tokenUid);
 				}
 			}
