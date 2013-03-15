@@ -33,9 +33,11 @@
 #include "RecordHandle.h"
 #include "Schema.h"
 #include <memory>
+#include <sstream>
 #include <security_cdsa_utilities/cssmaclpod.h>
 #include <security_utilities/unix++.h>
 #include <security_utilities/logging.h>
+#include <CommonCrypto/CommonDigest.h>
 
 //
 // SPI wrapper macros
@@ -799,10 +801,24 @@ void Token::cacheObject(CSSM_DB_RECORDTYPE relationId, const std::string &name,
 std::string Token::cachedObjectPath(CSSM_DB_RECORDTYPE relationId,
 	const std::string &name) const
 {
+    unsigned char md[ CC_SHA256_DIGEST_LENGTH ];
+    std::ostringstream out;
 	char buffer[9];
-	sprintf(buffer, "%X", relationId);
-
-	return mCacheDirectory + "/" + buffer + "-" + name;
+    
+	sprintf(buffer, "%08X", (uint16_t)relationId);
+    
+    // the name is in effect the label - and can be set to nefarious things
+    // such as '../../etc/foobar'; or alternatively get logged in the log
+    // file all to easily. So mask.
+    //
+    CC_SHA256(name.c_str(), name.length(), md);
+    
+    out <<  mCacheDirectory << "/" << buffer <<  "-";
+    for (std::size_t i=0; i < CC_SHA256_DIGEST_LENGTH; i++) {
+        out << std::hex << md[i];
+    };
+    
+    return out.str();
 }
 
 Cursor *Token::createCursor(const CSSM_QUERY *inQuery)
