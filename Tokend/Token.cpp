@@ -802,18 +802,19 @@ std::string Token::cachedObjectPath(CSSM_DB_RECORDTYPE relationId,
 	const std::string &name) const
 {
     unsigned char md[ CC_SHA256_DIGEST_LENGTH ];
-    std::ostringstream out;
-	char buffer[9];
-    
-	sprintf(buffer, "%08X", (uint16_t)relationId);
     
     // the name is in effect the label - and can be set to nefarious things
     // such as '../../etc/foobar'; or alternatively get logged in the log
     // file all to easily. So mask.
     //
-    CC_SHA256(name.c_str(), name.length(), md);
+    CC_SHA256_CTX ctx;
+    CC_SHA256_Init(&ctx);
+    CC_SHA256_Update(&ctx, &relationId, sizeof(relationId));
+    CC_SHA256_Update(&ctx, name.c_str(), name.length());
+    CC_SHA256_Final(md, &ctx);
     
-    out <<  mCacheDirectory << "/" << buffer <<  "-";
+    std::ostringstream out;
+    out <<  mCacheDirectory << "/";
     for (std::size_t i=0; i < CC_SHA256_DIGEST_LENGTH; i++) {
         out << std::hex << md[i];
     };
