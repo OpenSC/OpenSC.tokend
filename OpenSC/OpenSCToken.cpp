@@ -261,28 +261,24 @@ char tokenUid[TOKEND_MAX_UID])
 						sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  Get Score from config file: %d\n", score);
 					}
                     
-					// Create a tokenUid
-					if (mScP15Card->tokeninfo->label != NULL)
-						strlcpy(tokenUid, mScP15Card->tokeninfo->label, TOKEND_MAX_UID);
-					if (mScP15Card->tokeninfo->serial_number != NULL)
-						strlcpy(tokenUid + strlen(tokenUid), mScP15Card->tokeninfo->serial_number,
-                                TOKEND_MAX_UID - strlen(tokenUid));
-
-                    unsigned char md[ CC_SHA1_DIGEST_LENGTH ];
-                    CC_SHA1_CTX ctx;
-                    CC_SHA1_Init(&ctx);
-                    CC_SHA1_Update(&ctx, mScP15Card->tokeninfo->label,
-                                   strlen(mScP15Card->tokeninfo->label));
-                    CC_SHA1_Update(&ctx, mScP15Card->tokeninfo->serial_number,
-                                   strlen(mScP15Card->tokeninfo->serial_number));
-                    CC_SHA1_Final(md, &ctx);
+					// Create a tokenUid - obscure the label somewhat as it is under
+					// control of the card issuer; and could contain naughtyness.
+					//
+		                    	unsigned char md[ CC_SHA1_DIGEST_LENGTH ];
+					CC_SHA1_CTX ctx;
+					CC_SHA1_Init(&ctx);
+					CC_SHA1_Update(&ctx, mScP15Card->tokeninfo->label,
+						strlen(mScP15Card->tokeninfo->label));
+					CC_SHA1_Update(&ctx, mScP15Card->tokeninfo->serial_number,
+						strlen(mScP15Card->tokeninfo->serial_number));
+					CC_SHA1_Final(md, &ctx);
                     
-                    std::stringstream out;
-                    for (std::size_t i=0; i < MIN(TOKEND_MAX_UID/2,CC_SHA1_DIGEST_LENGTH); i++) {
-                        out << std::hex << md[i];
-                    };                    
-                    strlcpy(tokenUid,out.str().c_str(),TOKEND_MAX_UID);
-                    
+					std::stringstream out;
+					for (std::size_t i=0; i < MIN(TOKEND_MAX_UID/2,CC_SHA1_DIGEST_LENGTH); i++) {
+						out << std::hex << md[i];
+					};                    
+					strlcpy(tokenUid,out.str().c_str(),TOKEND_MAX_UID);
+					
 					sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    score = %d, tokenUid = \"%s\"\n", score, tokenUid);
 				}
 			}
