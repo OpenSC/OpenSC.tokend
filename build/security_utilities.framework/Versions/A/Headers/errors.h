@@ -31,7 +31,7 @@
 #include <errno.h>
 #include <security_utilities/utilities.h>
 #include <exception>
-#include <CoreServices/../Frameworks/CarbonCore.framework/Headers/MacTypes.h>
+#include <MacTypes.h>
 
 #undef check
 
