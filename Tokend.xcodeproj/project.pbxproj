@@ -6,22 +6,6 @@
 	objectVersion = 42;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		52B2601F0BC5A864007E00F1 /* world */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 52B260280BC5A864007E00F1 /* Build configuration list for PBXAggregateTarget "world" */;
-			buildPhases = (
-			);
-			dependencies = (
-				529252170BC6BEED00816597 /* PBXTargetDependency */,
-				5B59A2390F431918003CD203 /* PBXTargetDependency */,
-				5B59A2910F431ADD003CD203 /* PBXTargetDependency */,
-			);
-			name = world;
-			productName = world;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		52B260320BC5A864007E00F1 /* Adornment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B9B6406DBF99F00014414 /* Adornment.cpp */; };
 		52B260330BC5A864007E00F1 /* Attribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C134A9606DBF81800FA17D9 /* Attribute.cpp */; };
@@ -71,13 +55,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		529252160BC6BEED00816597 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 52B2602D0BC5A864007E00F1;
-			remoteInfo = libtokend;
-		};
 		52B260DE0BC5A864007E00F1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -85,26 +62,12 @@
 			remoteGlobalIDString = 52B2604B0BC5A864007E00F1;
 			remoteInfo = "tokend (Upgraded)";
 		};
-		5B59A2380F431918003CD203 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 52B2604B0BC5A864007E00F1;
-			remoteInfo = tokend;
-		};
 		5B59A24C0F4319FB003CD203 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 52B2602D0BC5A864007E00F1;
 			remoteInfo = "libtokend (Upgraded)";
-		};
-		5B59A2900F431ADD003CD203 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B59A24A0F4319FB003CD203;
-			remoteInfo = OpenSC;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -406,7 +369,6 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				52B2601F0BC5A864007E00F1 /* world */,
 				52B2602D0BC5A864007E00F1 /* libtokend */,
 				52B2604B0BC5A864007E00F1 /* tokend */,
 				5B59A24A0F4319FB003CD203 /* OpenSC */,
@@ -500,77 +462,19 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		529252170BC6BEED00816597 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 52B2602D0BC5A864007E00F1 /* libtokend */;
-			targetProxy = 529252160BC6BEED00816597 /* PBXContainerItemProxy */;
-		};
 		52B260DF0BC5A864007E00F1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 52B2604B0BC5A864007E00F1 /* tokend */;
 			targetProxy = 52B260DE0BC5A864007E00F1 /* PBXContainerItemProxy */;
-		};
-		5B59A2390F431918003CD203 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 52B2604B0BC5A864007E00F1 /* tokend */;
-			targetProxy = 5B59A2380F431918003CD203 /* PBXContainerItemProxy */;
 		};
 		5B59A24B0F4319FB003CD203 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 52B2602D0BC5A864007E00F1 /* libtokend */;
 			targetProxy = 5B59A24C0F4319FB003CD203 /* PBXContainerItemProxy */;
 		};
-		5B59A2910F431ADD003CD203 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B59A24A0F4319FB003CD203 /* OpenSC */;
-			targetProxy = 5B59A2900F431ADD003CD203 /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		52B260290BC5A864007E00F1 /* Development */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_VARIANTS = debug;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
-				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_MISSING_PARENTHESES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_PEDANTIC = NO;
-				GCC_WARN_SHADOW = NO;
-				GCC_WARN_SIGN_COMPARE = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_LABEL = YES;
-				GCC_WARN_UNUSED_PARAMETER = YES;
-				GCC_WARN_UNUSED_VALUE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				PRODUCT_NAME = world;
-				SECTORDER_FLAGS = "";
-				ZERO_LINK = NO;
-			};
-			name = Development;
-		};
-		52B2602A0BC5A864007E00F1 /* Deployment */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PRODUCT_NAME = world;
-				SECTORDER_FLAGS = "";
-				ZERO_LINK = NO;
-			};
-			name = Deployment;
-		};
 		52B260460BC5A864007E00F1 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -829,15 +733,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		52B260280BC5A864007E00F1 /* Build configuration list for PBXAggregateTarget "world" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				52B260290BC5A864007E00F1 /* Development */,
-				52B2602A0BC5A864007E00F1 /* Deployment */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Deployment;
-		};
 		52B260450BC5A864007E00F1 /* Build configuration list for PBXNativeTarget "libtokend" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
