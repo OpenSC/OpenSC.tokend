@@ -154,8 +154,8 @@
 		52CA8343067E8175005A1EBA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Security.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		52DE698106E93B870024EA03 /* PKCS11Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PKCS11Object.h; sourceTree = "<group>"; };
 		52DE698206E93B870024EA03 /* PKCS11Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PKCS11Object.cpp; sourceTree = "<group>"; };
-		5B51D6F513041C4500D7135F /* libopensc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopensc.dylib; path = opensc-src/libopensc/.libs/libopensc.dylib; sourceTree = SOURCE_ROOT; };
-		5B51D6F713041C4500D7135F /* BELPIC.tokend */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BELPIC.tokend; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B51D6F513041C4500D7135F /* libopensc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopensc.dylib; path = "opensc-src/libopensc/.libs/libopensc.dylib"; sourceTree = SOURCE_ROOT; };
+		5B51D6F713041C4500D7135F /* OpenSC.tokend */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenSC.tokend; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B59A2680F431A9E003CD203 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5B59A26A0F431A9E003CD203 /* opensc_csp_capabilities.mdsinfo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = opensc_csp_capabilities.mdsinfo; sourceTree = "<group>"; };
 		5B59A26B0F431A9E003CD203 /* opensc_csp_capabilities_common.mds */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = opensc_csp_capabilities_common.mds; sourceTree = "<group>"; };
@@ -206,7 +206,7 @@
 			children = (
 				52B2604A0BC5A864007E00F1 /* libtokend.a */,
 				52B260630BC5A864007E00F1 /* tokend.framework */,
-				5B51D6F713041C4500D7135F /* BELPIC.tokend */,
+				5B51D6F713041C4500D7135F /* OpenSC.tokend */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -384,7 +384,7 @@
 			);
 			name = OpenSC;
 			productName = "Common Access Card";
-			productReference = 5B51D6F713041C4500D7135F /* BELPIC.tokend */;
+			productReference = 5B51D6F713041C4500D7135F /* OpenSC.tokend */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -742,7 +742,7 @@
 				OTHER_LDFLAGS_debug = "$(OTHER_LDFLAGS) -framework tokend,_debug -framework PCSC,_debug -framework SecurityTokend,_debug -framework Security,_debug -framework security_cdsa_client,_debug -framework security_cdsa_utilities,_debug -framework security_utilities,_debug";
 				OTHER_LDFLAGS_normal = "$(OPT_LDXFLAGS) $(OTHER_LDFLAGS) -framework tokend -framework PCSC -framework SecurityTokend -framework Security -framework security_cdsa_client$(OPT_LDXNOPIC) -framework security_cdsa_utilities$(OPT_LDXNOPIC) -framework security_utilities$(OPT_LDXNOPIC)";
 				OTHER_LDFLAGS_profile = "$(OPT_LDXFLAGS) $(OTHER_LDFLAGS) -pg -framework tokend,_profile -framework PCSC,_profile -framework SecurityTokend,_profile -framework Security,_profile -framework security_cdsa_client,_profile  -framework security_cdsa_utilities,_profile -framework security_utilities,_profile";
-				PRODUCT_NAME = BELPIC;
+				PRODUCT_NAME = OpenSC;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = (
 					"-Wmost",
