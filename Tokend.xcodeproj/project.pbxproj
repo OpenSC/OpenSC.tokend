@@ -148,7 +148,7 @@
 		523F79ED06D5AC27004256A0 /* security_cdsa_utilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = security_cdsa_utilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		523F79EE06D5AC27004256A0 /* security_utilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = security_utilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		52B2604A0BC5A864007E00F1 /* libtokend.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtokend.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		52B260620BC5A864007E00F1 /* Info-tokend__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-tokend__Upgraded_.plist"; sourceTree = "<group>"; };
+		52B260620BC5A864007E00F1 /* Info-tokend.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-tokend.plist"; path = "../Info-tokend.plist"; sourceTree = "<group>"; };
 		52B260630BC5A864007E00F1 /* tokend.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = tokend.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		52CA8342067E8175005A1EBA /* PCSC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PCSC.framework; path = /System/Library/Frameworks/PCSC.framework; sourceTree = "<absolute>"; };
 		52CA8343067E8175005A1EBA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Security.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -196,7 +196,6 @@
 				4CA858F0065441220083DED3 /* External Frameworks */,
 				4C415098073061D6004C9490 /* External Libraries */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
-				52B260620BC5A864007E00F1 /* Info-tokend__Upgraded_.plist */,
 			);
 			name = OpenSCTokend;
 			sourceTree = "<group>";
@@ -214,6 +213,7 @@
 		4C134A8706DBF81800FA17D9 /* Tokend */ = {
 			isa = PBXGroup;
 			children = (
+				52B260620BC5A864007E00F1 /* Info-tokend.plist */,
 				4C1B9B6406DBF99F00014414 /* Adornment.cpp */,
 				4C1B9B6306DBF99F00014414 /* Adornment.h */,
 				4C134A9606DBF81800FA17D9 /* Attribute.cpp */,
@@ -666,7 +666,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INFOPLIST_FILE = "Info-tokend__Upgraded_.plist";
+				INFOPLIST_FILE = "Info-tokend.plist";
 				PRODUCT_NAME = tokend;
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
@@ -680,7 +680,7 @@
 				GCC_DEBUGGING_SYMBOLS = default;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INFOPLIST_FILE = "Info-tokend__Upgraded_.plist";
+				INFOPLIST_FILE = "Info-tokend.plist";
 				PRODUCT_NAME = tokend;
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = NO;
@@ -717,6 +717,7 @@
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = OpenSC/Info.plist;
 /*				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Security/tokend"; */
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
