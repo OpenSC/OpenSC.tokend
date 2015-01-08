@@ -16,7 +16,7 @@ A *tokend* makes the keys and certificates on your smart card appear in *Keychai
 
 ## Installation
 
-OpenSC.tokend is distributed with the OpenSC installer for OS X and not available separately.
+OpenSC.tokend is distributed with the [OpenSC installer for OS X](https://github.com/OpenSC/OpenSC/releases) and not available separately.
 
 ## Building
 
