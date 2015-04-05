@@ -369,9 +369,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				5B59A24A0F4319FB003CD203 /* OpenSC */,
 				52B2602D0BC5A864007E00F1 /* libtokend */,
 				52B2604B0BC5A864007E00F1 /* tokend */,
-				5B59A24A0F4319FB003CD203 /* OpenSC */,
 			);
 		};
 /* End PBXProject section */
