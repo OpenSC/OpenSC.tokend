@@ -567,27 +567,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = build;
-				FRAMEWORK_VERSION = A;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Info-tokend.plist";
 				PRODUCT_NAME = tokend;
 				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = YES;
 			};
 			name = Development;
 		};
 		52B2605F0BC5A864007E00F1 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_VERSION = A;
-				GCC_DEBUGGING_SYMBOLS = default;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Info-tokend.plist";
 				PRODUCT_NAME = tokend;
 				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = NO;
 			};
 			name = Deployment;
 		};
