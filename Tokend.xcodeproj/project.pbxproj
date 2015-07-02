@@ -305,7 +305,6 @@
 			buildPhases = (
 				52B260310BC5A864007E00F1 /* Sources */,
 				52B260430BC5A864007E00F1 /* ShellScript */,
-				52B260440BC5A864007E00F1 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -408,20 +407,6 @@
 			shellScript = "for variant in ${BUILD_VARIANTS}\ndo\n\tpostfix=`echo _${variant} | sed 's/_normal//'`\n\tfrmwk=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework\"\n\tversa=\"${frmwk}/Versions/A\"\n\tcp \"${BUILT_PRODUCTS_DIR}/lib${PRODUCT_NAME}${postfix}.a\" \"${versa}/${PRODUCT_NAME}${postfix}\"\n\tln -fs \"${versa}/${PRODUCT_NAME}${postfix}\" ${frmwk}/${PRODUCT_NAME}${postfix}\n\tnmedit -p \"${versa}/${PRODUCT_NAME}${postfix}\"\n\tranlib    \"${versa}/${PRODUCT_NAME}${postfix}\"\ndone";
 			showEnvVarsInLog = 0;
 		};
-		52B260440BC5A864007E00F1 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "for variant in ${BUILD_VARIANTS}\ndo\n\tpostfix=`echo _${variant} | sed 's/_normal//'`\n\tcp -p \"${SYMROOT}/${PRODUCT_NAME}${postfix}\" \"${DSTROOT}/usr/local/SecurityPieces/Frameworks/${PRODUCT_NAME}.framework/Versions/A\"\n\tranlib \"${DSTROOT}/usr/local/SecurityPieces/Frameworks/${PRODUCT_NAME}.framework/Versions/A/${PRODUCT_NAME}${postfix}\"\n\tln -fs \"Versions/Current/${PRODUCT_NAME}${postfix}\" \"${DSTROOT}/usr/local/SecurityPieces/Frameworks/${PRODUCT_NAME}.framework\"\ndone";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -509,6 +494,7 @@
 				OTHER_LDFLAGS_normal = "$(OPT_LDFLAGS) $(OTHER_LDFLAGS)";
 				OTHER_LDFLAGS_profile = "$(OPT_LDFLAGS) $(OTHER_LDFLAGS) -pg";
 				PRODUCT_NAME = tokend;
+				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -555,6 +541,7 @@
 				OTHER_LDFLAGS_normal = "$(OPT_LDFLAGS) $(OTHER_LDFLAGS)";
 				OTHER_LDFLAGS_profile = "$(OPT_LDFLAGS) $(OTHER_LDFLAGS) -pg";
 				PRODUCT_NAME = tokend;
+				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -571,6 +558,7 @@
 				FRAMEWORK_SEARCH_PATHS = build;
 				INFOPLIST_FILE = "Info-tokend.plist";
 				PRODUCT_NAME = tokend;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Development;
@@ -580,6 +568,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = "Info-tokend.plist";
 				PRODUCT_NAME = tokend;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Deployment;
@@ -615,7 +604,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = OpenSC/Info.plist;
-/*				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Security/tokend"; */
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Security/tokend";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
@@ -665,7 +654,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				HEADER_SEARCH_PATHS = "$(BUILD_DIR)/opensc-src";
 				INFOPLIST_FILE = OpenSC/Info.plist;
-/*				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Security/tokend"; */
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Security/tokend";
 				LIBRARY_SEARCH_PATHS = (
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					/Library/OpenSC/lib,
