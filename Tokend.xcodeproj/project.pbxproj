@@ -488,9 +488,8 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = LIMITED_SIGNING;
 				LIBRARY_STYLE = STATIC;
-				OPT_CFLAGS = "-DNDEBUG -Os $(OPT_INLINEFLAGS)";
+				OPT_CFLAGS = "-DNDEBUG -Os";
 				OPT_CPPFLAGS = "$(OPT_CFLAGS)";
-				OPT_INLINEFLAGS = "-finline-functions";
 				OPT_LDFLAGS = "-dead_strip";
 				OTHER_ASFLAGS_debug = "$(OTHER_CFLAGS)";
 				OTHER_ASFLAGS_normal = "-DNDEBUG $(OTHER_CFLAGS)";
@@ -534,9 +533,8 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = LIMITED_SIGNING;
 				LIBRARY_STYLE = STATIC;
-				OPT_CFLAGS = "-DNDEBUG -Os $(OPT_INLINEFLAGS)";
+				OPT_CFLAGS = "-DNDEBUG -Os";
 				OPT_CPPFLAGS = "$(OPT_CFLAGS)";
-				OPT_INLINEFLAGS = "-finline-functions";
 				OPT_LDFLAGS = "-dead_strip";
 				OTHER_ASFLAGS_debug = "$(OTHER_CFLAGS)";
 				OTHER_ASFLAGS_normal = "-DNDEBUG $(OTHER_CFLAGS)";
@@ -545,7 +543,7 @@
 				OTHER_CFLAGS_debug = "$(OTHER_CFLAGS) -O0 -fno-inline";
 				OTHER_CFLAGS_nopic = "-mdynamic-no-pic $(OPT_CFLAGS) $(OTHER_CFLAGS)";
 				OTHER_CFLAGS_normal = "$(OPT_CFLAGS)  $(OTHER_CFLAGS)";
-				OTHER_CFLAGS_profile = "\U0001$(OPT_CFLAGS)  $(OTHER_CFLAGS) -pg";
+				OTHER_CFLAGS_profile = "$(inherited) $(OPT_CFLAGS)  $(OTHER_CFLAGS) -pg";
 				OTHER_CPLUSPLUSFLAGS_debug = "$(OTHER_CFLAGS) -O0 -fno-inline";
 				OTHER_CPLUSPLUSFLAGS_nopic = "-mdynamic-no-pic $(OPT_CPPFLAGS) $(OTHER_CFLAGS)";
 				OTHER_CPLUSPLUSFLAGS_normal = "$(OPT_CPPFLAGS) $(OTHER_CFLAGS)";
@@ -624,8 +622,7 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(LOCAL_LIBRARY_DIR)/OpenSC/lib\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../src/libopensc/.libs\"";
 				OPT_CPPXFLAGS = "$(OPT_CXFLAGS) -fno-enforce-eh-specs -fno-implement-inlines";
-				OPT_CXFLAGS = "-DNDEBUG $(OPT_INLINEXFLAGS)";
-				OPT_INLINEXFLAGS = " -finline-functions";
+				OPT_CXFLAGS = "-DNDEBUG";
 				OPT_LDXFLAGS = "-dead_strip";
 				OPT_LDXNOPIC = ",_nopic";
 				OTHER_ASFLAGS_debug = "$(OTHER_CFLAGS)";
@@ -672,8 +669,7 @@
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../src/libopensc/.libs\"";
 				OPT_CPPXFLAGS = "$(OPT_CXFLAGS) -fno-enforce-eh-specs -fno-implement-inlines";
-				OPT_CXFLAGS = "-DNDEBUG $(OPT_INLINEXFLAGS)";
-				OPT_INLINEXFLAGS = " -finline-functions";
+				OPT_CXFLAGS = "-DNDEBUG";
 				OPT_LDXFLAGS = "-dead_strip";
 				OPT_LDXNOPIC = ",_nopic";
 				OTHER_ASFLAGS_debug = "$(OTHER_CFLAGS)";
