@@ -355,6 +355,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0700;
 			};
 			buildConfigurationList = C27AD2220987FCDC001272E0 /* Build configuration list for PBXProject "Tokend" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -466,6 +467,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_VARIANTS = debug;
+				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 35209;
 				FRAMEWORK_SEARCH_PATHS = build;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -512,6 +514,7 @@
 					debug,
 					nopic,
 				);
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 35209;
 				FRAMEWORK_SEARCH_PATHS = build;
@@ -553,6 +556,7 @@
 		52B2605E0BC5A864007E00F1 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = build;
 				INFOPLIST_FILE = "Info-tokend.plist";
 				PRODUCT_NAME = tokend;
@@ -564,6 +568,7 @@
 		52B2605F0BC5A864007E00F1 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "Info-tokend.plist";
 				PRODUCT_NAME = tokend;
 				SKIP_INSTALL = YES;
@@ -576,6 +581,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				BUILD_VARIANTS = debug;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 35209;
 				FRAMEWORK_SEARCH_PATHS = build;
@@ -626,6 +632,7 @@
 				OTHER_LDFLAGS_debug = "$(OTHER_LDFLAGS) -framework tokend,_debug -framework PCSC,_debug -framework SecurityTokend,_debug -framework Security,_debug -framework security_cdsa_client,_debug -framework security_cdsa_utilities,_debug -framework security_utilities,_debug";
 				OTHER_LDFLAGS_normal = "$(OPT_LDXFLAGS) $(OTHER_LDFLAGS) -framework tokend -framework PCSC -framework SecurityTokend -framework Security -framework security_cdsa_client$(OPT_LDXNOPIC) -framework security_cdsa_utilities$(OPT_LDXNOPIC) -framework security_utilities$(OPT_LDXNOPIC)";
 				OTHER_LDFLAGS_profile = "$(OPT_LDXFLAGS) $(OTHER_LDFLAGS) -pg -framework tokend,_profile -framework PCSC,_profile -framework SecurityTokend,_profile -framework Security,_profile -framework security_cdsa_client,_profile  -framework security_cdsa_utilities,_profile -framework security_utilities,_profile";
+				PRODUCT_BUNDLE_IDENTIFIER = com.apple.tokend.opensc;
 				PRODUCT_NAME = OpenSC;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = (
@@ -645,6 +652,7 @@
 					normal,
 					debug,
 				);
+				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 35209;
 				FRAMEWORK_SEARCH_PATHS = build;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -673,6 +681,7 @@
 				OTHER_LDFLAGS_debug = "$(OTHER_LDFLAGS) -framework  tokend,_debug -framework PCSC,_debug -framework SecurityTokend,_debug -framework Security,_debug -framework security_cdsa_client,_debug -framework security_cdsa_utilities,_debug -framework security_utilities,_debug";
 				OTHER_LDFLAGS_normal = "$(OPT_LDXFLAGS) $(OTHER_LDFLAGS) -framework tokend -framework PCSC -framework SecurityTokend -framework Security -framework security_cdsa_client$(OPT_LDXNOPIC) -framework security_cdsa_utilities$(OPT_LDXNOPIC) -framework security_utilities$(OPT_LDXNOPIC)";
 				OTHER_LDFLAGS_profile = "$(OPT_LDXFLAGS) $(OTHER_LDFLAGS) -pg -framework tokend,_profile -framework PCSC,_profile -framework SecurityTokend,_profile -framework Security,_profile -framework security_cdsa_client,_profile  -framework security_cdsa_utilities,_profile -framework security_utilities,_profile";
+				PRODUCT_BUNDLE_IDENTIFIER = com.apple.tokend.opensc;
 				PRODUCT_NAME = OpenSC;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = (
@@ -688,10 +697,11 @@
 		C27AD2230987FCDC001272E0 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = x86_64;
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)";
+				ENABLE_TESTABILITY = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk;
 			};
@@ -700,7 +710,6 @@
 		C27AD2240987FCDC001272E0 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = x86_64;
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)";
