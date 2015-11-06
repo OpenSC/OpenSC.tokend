@@ -132,7 +132,11 @@ uint32_t OpenSCToken::pinStatus(int pinNum)
 {
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus for pinNum (%d)\n", pinNum);
 
-	CssmError::throwMe(CSSM_ERRCODE_FUNCTION_NOT_IMPLEMENTED);
+	if (pinNum == mCurrentPIN && !isLocked()) {
+		return 0x9000;
+	} else {
+		return 0x6300;
+	}
 }
 
 
