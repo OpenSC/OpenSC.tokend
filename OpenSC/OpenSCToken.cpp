@@ -82,6 +82,7 @@ const unsigned char *newPin, size_t newPinLength)
 		CssmError::throwMe(CSSM_ERRCODE_SAMPLE_VALUE_NOT_SUPPORTED);
 
 	if( _changePIN( pinNum, oldPin, oldPinLength, newPin, newPinLength ) ) {
+		mCurrentPIN = pinNum;
 		mLocked = false;
 	}
 	else {
@@ -133,8 +134,11 @@ uint32_t OpenSCToken::pinStatus(int pinNum)
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus for pinNum (%d)\n", pinNum);
 
 	if (pinNum == mCurrentPIN && !isLocked()) {
+		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus Verified");
 		return 0x9000;
-	} else {
+	}
+   	else {
+		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus blocked");
 		return 0x6300;
 	}
 }
@@ -159,7 +163,8 @@ void OpenSCToken::verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
 		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  Activating workaround for PIN #%d\n", pNumber);
 	}
 	if (_verifyPIN(pNumber, pin, pinLength)) {
-		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  About to call BEGIN()\n");
+		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  PIN verified\n");
+		mCurrentPIN = pNumber;
 		mLocked = false;
 	}
 	else {
@@ -212,6 +217,7 @@ void OpenSCToken::unverifyPIN(int pinNum)
 	if (pinNum != -1)
 		CssmError::throwMe(CSSM_ERRCODE_SAMPLE_VALUE_NOT_SUPPORTED);
 
+	mCurrentPIN = pinNum;
 	mLocked = true;
 }
 
@@ -344,6 +350,22 @@ void OpenSCToken::getOwner(AclOwnerPrototype &owner)
 void OpenSCToken::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls)
 {
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::getAcl()\n");
+
+	if (unsigned pin = pinFromAclTag(tag, "?")) {
+		static AutoAclEntryInfoList acl;
+		acl.clear();
+		acl.allocator(Allocator::standard());
+		uint32_t status = this->pinStatus(pin);
+		if (status == 0x9000)
+			acl.addPinState(pin, CSSM_ACL_PREAUTH_TRACKING_AUTHORIZED);
+		else
+			/* FIXME add support for propagating the number of retries via
+			acl.addPinState(pin, 0, RETRIES); */
+			acl.addPinState(pin, CSSM_ACL_PREAUTH_TRACKING_UNKNOWN);
+		count = acl.size();
+		acls = acl.entries();
+		return;
+	}
 
 	// get pin list, then for each pin in the future
 	if (!mAclEntries) {
