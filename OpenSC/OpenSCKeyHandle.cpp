@@ -155,7 +155,7 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 	// Get padding, but default to pkcs1 style padding for RSA
 	if (context.algorithm() == CSSM_ALGID_RSA) {
 		padding = CSSM_PADDING_PKCS1;
-		context.getInt(CSSM_ATTRIBUTE_PADDING, padding);
+		padding = context.getInt(CSSM_ATTRIBUTE_PADDING, padding);
 	}
 
 	if (padding == CSSM_PADDING_PKCS1) {
