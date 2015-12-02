@@ -33,6 +33,7 @@
 #include <Security/cssmapple.h>
 
 #include "libopensc/log.h"
+#include "libopensc/asn1.h"
 /************************** OpenSCKeyHandle ************************/
 
 OpenSCKeyHandle::OpenSCKeyHandle(OpenSCToken &OpenSCToken,
@@ -86,7 +87,10 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 	if (context.algorithm() == CSSM_ALGID_RSA) {
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  algorithm == CSSM_ALGID_RSA\n");
 	}
-	else {
+	else if (context.algorithm() == CSSM_ALGID_ECDSA) {
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  algorithm == CSSM_ALGID_ECDSA\n");
+	}
+   	else {
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Unknown algorithm: 0x%0x, exiting\n", context.algorithm());
 		CssmError::throwMe(CSSMERR_CSP_INVALID_ALGORITHM);
 	}
@@ -131,13 +135,32 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		CssmError::throwMe(CSSMERR_CSP_INVALID_DIGEST_ALGORITHM);
 	}
 
-	// Get padding, but default to pkcs1 style padding
-	uint32 padding = CSSM_PADDING_PKCS1;
-	context.getInt(CSSM_ATTRIBUTE_PADDING, padding);
+	// Consistency validation - necessary for MS Outlook 2011 that seems
+	// to ask for RSA signatures with EC keys.
+	if ((context.algorithm() == CSSM_ALGID_ECDSA
+				&& mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_RSA)
+		   	|| (context.algorithm() == CSSM_ALGID_RSA
+			   	&& mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_EC))
+	{
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+				"  Illegal combination of key type %s and requested algorithm %s\n",
+				(const char *)(mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_RSA?
+					"PRKEY_RSA" : "PRKEY_EC"),
+				(const char *)(context.algorithm() == CSSM_ALGID_ECDSA? "EDCSA" : "RSA")
+				);
+		CssmError::throwMe(CSSMERR_CSP_INVALID_ALGORITHM);
+	}
+
+	uint32 padding = CSSM_PADDING_NONE;
+	// Get padding, but default to pkcs1 style padding for RSA
+	if (context.algorithm() == CSSM_ALGID_RSA) {
+		padding = CSSM_PADDING_PKCS1;
+		context.getInt(CSSM_ATTRIBUTE_PADDING, padding);
+	}
 
 	if (padding == CSSM_PADDING_PKCS1) {
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  PKCS#1 padding\n");
-		flags |= SC_ALGORITHM_RSA_PAD_PKCS1;
+		//flags |= SC_ALGORITHM_RSA_PAD_PKCS1; // hopefully not needed now
 	}
 	else if (padding == CSSM_PADDING_NONE) {
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  NO padding\n");
@@ -147,24 +170,53 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		CssmError::throwMe(CSSMERR_CSP_INVALID_ATTR_PADDING);
 	}
 
-	size_t keyLength = (mKey.sizeInBits() + 7) / 8;
+	// Modulus size in bits for RSA, or field len in bits for EC
+	size_t sig_len = (mKey.sizeInBits() + 7) / 8;
+	if (mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_EC)
+		sig_len *= 2; // doubling ECC field size for ECDSA
 	// @@@ Switch to using tokend allocators
 	unsigned char *outputData =
-		reinterpret_cast<unsigned char *>(malloc(keyLength));
+		reinterpret_cast<unsigned char *>(malloc(sig_len));
 	if (outputData == NULL)
 		CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
 
-	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Signing buffers: inlen=%d, outlen=%d\n",input.Length, keyLength);
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+			"  Signing buffers: inlen=%d, outlen=%d\n",input.Length, sig_len);
 	// Call OpenSC to do the actual signing
 	int rv = sc_pkcs15_compute_signature(mToken.mScP15Card,
-		mKey.signKey(), flags, input.Data, input.Length, outputData, keyLength);
+			mKey.signKey(), flags, input.Data, input.Length, outputData, sig_len);
 	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_compute_signature(): rv = %d\n", rv);
 	if (rv < 0) {
 		free(outputData);
 		CssmError::throwMe(CSSMERR_CSP_FUNCTION_FAILED);
 	}
-	signature.Data = outputData;
-	signature.Length = rv;
+
+	if (mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_EC)
+	{
+		// Wrap the result of compute_signature() as ASN.1 SEQUENCE
+		unsigned char *seq;
+		size_t seqlen;
+		if (sc_asn1_sig_value_rs_to_sequence(mToken.mScCtx, outputData, sig_len, &seq, &seqlen))   {
+			sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+					"Failed to convert signature to ASN1 sequence format.\n");
+			free(outputData);
+			CssmError::throwMe(CSSMERR_CSP_INVALID_OUTPUT_VECTOR);
+		}
+		free(outputData);
+		signature.Data = reinterpret_cast<unsigned char *>(malloc(seqlen));
+		if (signature.Data == NULL)
+			CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
+		signature.Length = seqlen;
+		memcpy(signature.Data, seq, seqlen);
+		free(seq);
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+				"  Converted ECDSA signature to ASN.1 SEQUENCE: seqlen=%d\n",
+				seqlen);
+	} else {
+		// For RSA just pass along the return of sc_pkcs15_compute_signature()
+		signature.Data = outputData;
+		signature.Length = rv;
+	}
 }
 
 
