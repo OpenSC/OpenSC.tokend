@@ -160,7 +160,7 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 
 	if (padding == CSSM_PADDING_PKCS1) {
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  PKCS#1 padding\n");
-		//flags |= SC_ALGORITHM_RSA_PAD_PKCS1; // hopefully not needed now
+		flags |= SC_ALGORITHM_RSA_PAD_PKCS1; // hopefully not needed now
 	}
 	else if (padding == CSSM_PADDING_NONE) {
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  NO padding\n");
