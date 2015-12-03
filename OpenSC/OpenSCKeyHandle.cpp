@@ -160,7 +160,7 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 
 	if (padding == CSSM_PADDING_PKCS1) {
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  PKCS#1 padding\n");
-		flags |= SC_ALGORITHM_RSA_PAD_PKCS1; // hopefully not needed now
+		flags |= SC_ALGORITHM_RSA_PAD_PKCS1;
 	}
 	else if (padding == CSSM_PADDING_NONE) {
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  NO padding\n");
@@ -191,9 +191,13 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		CssmError::throwMe(CSSMERR_CSP_FUNCTION_FAILED);
 	}
 
-	if (mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_EC)
+	if (mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_RSA)
 	{
-		// Wrap the result of compute_signature() as ASN.1 SEQUENCE
+                // For RSA just pass along the return of sc_pkcs15_compute_signature()
+                signature.Data = outputData;
+                signature.Length = rv;
+        } else {
+		// For ECDSA wrap the result of compute_signature() as ASN.1 SEQUENCE
 		unsigned char *seq;
 		size_t seqlen;
 		if (sc_asn1_sig_value_rs_to_sequence(mToken.mScCtx, outputData, sig_len, &seq, &seqlen))   {
@@ -212,10 +216,6 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
 				"  Converted ECDSA signature to ASN.1 SEQUENCE: seqlen=%d\n",
 				seqlen);
-	} else {
-		// For RSA just pass along the return of sc_pkcs15_compute_signature()
-		signature.Data = outputData;
-		signature.Length = rv;
 	}
 }
 
@@ -261,26 +261,63 @@ const CssmData &cipher, CssmData &clear)
 	if (context.type() != CSSM_ALGCLASS_ASYMMETRIC)
 		CssmError::throwMe(CSSMERR_CSP_INVALID_CONTEXT);
 
-	if (context.algorithm() != CSSM_ALGID_RSA)
+	if ((context.algorithm() != CSSM_ALGID_RSA) &&
+            (context.algorithm() != CSSM_ALGID_ECDH))
 		CssmError::throwMe(CSSMERR_CSP_INVALID_ALGORITHM);
 
 	// @@@ Switch to using tokend allocators
-	unsigned char *outputData =
+        unsigned char *outputData = NULL;
 		reinterpret_cast<unsigned char *>(malloc(cipher.Length));
-	if (outputData == NULL)
-		CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
-
+	
 	// Call OpenSC to do the actual decryption
-	int rv = sc_pkcs15_decipher(mToken.mScP15Card,
-		mKey.decryptKey(), SC_ALGORITHM_RSA_PAD_PKCS1,
-		cipher.Data, cipher.Length, outputData, cipher.Length);
-	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_decipher(): rv = %d\n", rv);
-	if (rv < 0) {
-		free(outputData);
-		CssmError::throwMe(CSSMERR_CSP_FUNCTION_FAILED);
-	}
-	clear.Data = outputData;
-	clear.Length = rv;
+        int rv = -1; // return code
+        unsigned long output_len = 0; // needed for ECDH
+        
+        if (context.algorithm() == CSSM_ALGID_RSA) {
+                // RSA decryption
+                outputData =
+                	reinterpret_cast<unsigned char *>(malloc(cipher.Length));
+                if (outputData == NULL)
+                        CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
+		rv = sc_pkcs15_decipher(mToken.mScP15Card,
+			mKey.decryptKey(), SC_ALGORITHM_RSA_PAD_PKCS1,
+			cipher.Data, cipher.Length, outputData, cipher.Length);
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+                         "  sc_pkcs15_decipher(): rv = %d\n", rv);
+		if (rv < 0) {
+			free(outputData);
+			CssmError::throwMe(CSSMERR_CSP_FUNCTION_FAILED);
+		}
+		clear.Data = outputData;
+		clear.Length = rv;
+        }
+        else {
+                // ECDH key derivation
+                // First get length of the derived key
+                rv = sc_pkcs15_derive(mToken.mScP15Card,
+	                        mKey.decryptKey(), SC_ALGORITHM_ECDH_CDH_RAW,
+                                cipher.Data, cipher.Length, NULL, &output_len);
+                sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+                         "  sc_pkcs15_derive() told us to allocate %d bytes\n",
+                         output_len);
+                outputData =
+	                reinterpret_cast<unsigned char *>(malloc(output_len));
+                if (outputData == NULL)
+                        CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
+
+                rv = sc_pkcs15_derive(mToken.mScP15Card,
+                        mKey.decryptKey(), SC_ALGORITHM_ECDH_CDH_RAW,
+                        cipher.Data, cipher.Length, outputData, &output_len);
+                sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+                         "  sc_pkcs15_derive(): rv = %d\n", rv);
+                if (rv < 0) {
+                        free(outputData);
+                        CssmError::throwMe(CSSMERR_CSP_FUNCTION_FAILED);
+                }
+                clear.Data = outputData;
+                clear.Length = output_len;
+
+        }
 
 	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  decrypt(): returning with %d decrypted bytes%d\n", clear.Length);
 }
