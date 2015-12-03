@@ -160,7 +160,7 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 
 	if (padding == CSSM_PADDING_PKCS1) {
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  PKCS#1 padding\n");
-		flags |= SC_ALGORITHM_RSA_PAD_PKCS1; // hopefully not needed now
+		flags |= SC_ALGORITHM_RSA_PAD_PKCS1;
 	}
 	else if (padding == CSSM_PADDING_NONE) {
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  NO padding\n");
@@ -191,9 +191,13 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		CssmError::throwMe(CSSMERR_CSP_FUNCTION_FAILED);
 	}
 
-	if (mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_EC)
+	if (mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_RSA)
 	{
-		// Wrap the result of compute_signature() as ASN.1 SEQUENCE
+                // For RSA just pass along the return of sc_pkcs15_compute_signature()
+                signature.Data = outputData;
+                signature.Length = rv;
+        } else {
+		// For ECDSA wrap the result of compute_signature() as ASN.1 SEQUENCE
 		unsigned char *seq;
 		size_t seqlen;
 		if (sc_asn1_sig_value_rs_to_sequence(mToken.mScCtx, outputData, sig_len, &seq, &seqlen))   {
@@ -212,10 +216,6 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
 				"  Converted ECDSA signature to ASN.1 SEQUENCE: seqlen=%d\n",
 				seqlen);
-	} else {
-		// For RSA just pass along the return of sc_pkcs15_compute_signature()
-		signature.Data = outputData;
-		signature.Length = rv;
 	}
 }
 
