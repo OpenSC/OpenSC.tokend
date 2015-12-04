@@ -137,25 +137,27 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 
 	// Consistency validation - necessary for MS Outlook 2011 that seems
 	// to ask for RSA signatures with EC keys.
-	if ((context.algorithm() == CSSM_ALGID_ECDSA
-				&& mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_RSA)
-		   	|| (context.algorithm() == CSSM_ALGID_RSA
-			   	&& mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_EC))
+	if ((context.algorithm() == CSSM_ALGID_ECDSA &&
+	     mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_RSA) ||
+	    (context.algorithm() == CSSM_ALGID_RSA &&
+	     mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_EC))
 	{
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
-				"  Illegal combination of key type %s and requested algorithm %s\n",
-				(const char *)(mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_RSA?
-					"PRKEY_RSA" : "PRKEY_EC"),
-				(const char *)(context.algorithm() == CSSM_ALGID_ECDSA? "EDCSA" : "RSA")
-				);
+			"  Illegal combination of key type %s and requested algorithm %s\n",
+			(const char *)(mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_RSA?
+				"PRKEY_RSA" : "PRKEY_EC"),
+			(const char *)(context.algorithm() == CSSM_ALGID_ECDSA? "EDCSA" : "RSA")
+		);
 		CssmError::throwMe(CSSMERR_CSP_INVALID_ALGORITHM);
 	}
 
-	uint32 padding = CSSM_PADDING_NONE;
 	// Get padding, but default to pkcs1 style padding for RSA
+	uint32 padding = context.getInt(CSSM_ATTRIBUTE_PADDING);
 	if (context.algorithm() == CSSM_ALGID_RSA) {
 		padding = CSSM_PADDING_PKCS1;
-		context.getInt(CSSM_ATTRIBUTE_PADDING, padding);
+	}
+	else if (context.algorithm() == CSSM_ALGID_ECDSA) {
+		padding = CSSM_PADDING_NONE;
 	}
 
 	if (padding == CSSM_PADDING_PKCS1) {
@@ -164,6 +166,7 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 	}
 	else if (padding == CSSM_PADDING_NONE) {
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  NO padding\n");
+		flags &= ~SC_ALGORITHM_RSA_PAD_PKCS1; // Make sure it isn't set
 	}
 	else {
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Unknown padding 0x%0x, exiting\n", padding);
@@ -174,6 +177,7 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 	size_t sig_len = (mKey.sizeInBits() + 7) / 8;
 	if (mKey.signKey()->type == SC_PKCS15_TYPE_PRKEY_EC)
 		sig_len *= 2; // doubling ECC field size for ECDSA
+	
 	// @@@ Switch to using tokend allocators
 	unsigned char *outputData =
 		reinterpret_cast<unsigned char *>(malloc(sig_len));
@@ -181,11 +185,14 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
 
 	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
-			"  Signing buffers: inlen=%d, outlen=%d\n",input.Length, sig_len);
-	// Call OpenSC to do the actual signing
+		"  Signing buffers: inlen=%d, outlen=%d\n",input.Length, sig_len);
+	// Call OpenSC to do the actual signing (RSA or ECDSA)
 	int rv = sc_pkcs15_compute_signature(mToken.mScP15Card,
-			mKey.signKey(), flags, input.Data, input.Length, outputData, sig_len);
-	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_compute_signature(): rv = %d\n", rv);
+					     mKey.signKey(), flags,
+					     input.Data, input.Length,
+					     outputData, sig_len);
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+		 "  sc_pkcs15_compute_signature(): rv = %d\n", rv);
 	if (rv < 0) {
 		free(outputData);
 		CssmError::throwMe(CSSMERR_CSP_FUNCTION_FAILED);
@@ -202,7 +209,7 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		size_t seqlen;
 		if (sc_asn1_sig_value_rs_to_sequence(mToken.mScCtx, outputData, sig_len, &seq, &seqlen))   {
 			sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
-					"Failed to convert signature to ASN1 sequence format.\n");
+				"Failed to convert signature to ASN1 sequence format.\n");
 			free(outputData);
 			CssmError::throwMe(CSSMERR_CSP_INVALID_OUTPUT_VECTOR);
 		}
@@ -214,8 +221,8 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		memcpy(signature.Data, seq, seqlen);
 		free(seq);
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
-				"  Converted ECDSA signature to ASN.1 SEQUENCE: seqlen=%d\n",
-				seqlen);
+			"  Converted ECDSA signature to ASN.1 SEQUENCE: seqlen=%d\n",
+			seqlen);
 	}
 }
 
@@ -257,17 +264,36 @@ const CssmData &cipher, CssmData &clear)
 {
 	secdebug("crypto", "decrypt alg: %lu", (long unsigned int) context.algorithm());
 	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCKeyHandle::decrypt(ciphertext length = %d)\n", cipher.Length);
-
+	
 	if (context.type() != CSSM_ALGCLASS_ASYMMETRIC)
 		CssmError::throwMe(CSSMERR_CSP_INVALID_CONTEXT);
 
 	if ((context.algorithm() != CSSM_ALGID_RSA) &&
             (context.algorithm() != CSSM_ALGID_ECDH))
+	{
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+			 "   algorithm invalid (neither RSA nor ECDH)\n");
 		CssmError::throwMe(CSSMERR_CSP_INVALID_ALGORITHM);
+	}
 
 	// @@@ Switch to using tokend allocators
-        unsigned char *outputData = NULL;
+        unsigned char *outputData =
 		reinterpret_cast<unsigned char *>(malloc(cipher.Length));
+	if (outputData == NULL)
+		CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
+
+	// Determine padding
+	unsigned int flags = 0;
+	unsigned int padding = 0;
+	padding = context.getInt(CSSM_ATTRIBUTE_PADDING, CSSMERR_CSP_INVALID_ATTR_PADDING);
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "   got padding=%d 0x%X\n",
+		 padding, padding);
+	if (padding == CSSM_PADDING_PKCS1)
+	{
+		flags |= SC_ALGORITHM_RSA_PAD_PKCS1;
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+			"   forced padding to SC_ALGORITHM_RSA_PAD_PKCS1\n");
+	}
 	
 	// Call OpenSC to do the actual decryption
         int rv = -1; // return code
@@ -275,12 +301,9 @@ const CssmData &cipher, CssmData &clear)
         
         if (context.algorithm() == CSSM_ALGID_RSA) {
                 // RSA decryption
-                outputData =
-                	reinterpret_cast<unsigned char *>(malloc(cipher.Length));
-                if (outputData == NULL)
-                        CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
+		padding |= SC_ALGORITHM_RSA_PAD_PKCS1; // enforce it for sure :)
 		rv = sc_pkcs15_decipher(mToken.mScP15Card,
-			mKey.decryptKey(), SC_ALGORITHM_RSA_PAD_PKCS1,
+			mKey.decryptKey(), flags,
 			cipher.Data, cipher.Length, outputData, cipher.Length);
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
                          "  sc_pkcs15_decipher(): rv = %d\n", rv);
@@ -293,23 +316,12 @@ const CssmData &cipher, CssmData &clear)
         }
         else {
                 // ECDH key derivation
-                // First get length of the derived key
-                rv = sc_pkcs15_derive(mToken.mScP15Card,
-	                        mKey.decryptKey(), SC_ALGORITHM_ECDH_CDH_RAW,
-                                cipher.Data, cipher.Length, NULL, &output_len);
-                sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
-                         "  sc_pkcs15_derive() told us to allocate %d bytes\n",
-                         output_len);
-                outputData =
-	                reinterpret_cast<unsigned char *>(malloc(output_len));
-                if (outputData == NULL)
-                        CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
-
-                rv = sc_pkcs15_derive(mToken.mScP15Card,
-                        mKey.decryptKey(), SC_ALGORITHM_ECDH_CDH_RAW,
+                 rv = sc_pkcs15_derive(mToken.mScP15Card,
+                        mKey.decryptKey(), flags,
                         cipher.Data, cipher.Length, outputData, &output_len);
                 sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
-                         "  sc_pkcs15_derive(): rv = %d\n", rv);
+                         "  sc_pkcs15_derive(): rv = %d output_len=%d\n",
+			 rv, output_len);
                 if (rv < 0) {
                         free(outputData);
                         CssmError::throwMe(CSSMERR_CSP_FUNCTION_FAILED);
@@ -319,7 +331,9 @@ const CssmData &cipher, CssmData &clear)
 
         }
 
-	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  decrypt(): returning with %d decrypted bytes%d\n", clear.Length);
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+		 "  decrypt(): return code %d, with %d decrypted bytes\n",
+		 rv, clear.Length);
 }
 
 
