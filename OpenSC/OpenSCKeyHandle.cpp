@@ -312,7 +312,7 @@ const CssmData &cipher, CssmData &clear)
                         CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
 		
 		rv = sc_pkcs15_decipher(mToken.mScP15Card,
-			mKey.decryptKey(), SC_ALGORITHM_RSA_PAD_PKCS1,
+			mKey.decryptKey(), flags,
 			cipher.Data, cipher.Length, outputData, cipher.Length);
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
                          "  sc_pkcs15_decipher(): rv = %d\n", rv);
