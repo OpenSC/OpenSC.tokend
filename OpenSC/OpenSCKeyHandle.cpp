@@ -131,7 +131,8 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		flags |= SC_ALGORITHM_RSA_HASH_NONE;
 	}
 	else {
-		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Unknown signOnly value: 0x%0x, exiting\n", signOnly);
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+                         "  Unknown signOnly value: 0x%0x, exiting\n", signOnly);
 		CssmError::throwMe(CSSMERR_CSP_INVALID_DIGEST_ALGORITHM);
 	}
 
@@ -186,6 +187,7 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 
 	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
 		"  Signing buffers: inlen=%d, outlen=%d\n",input.Length, sig_len);
+        
 	// Call OpenSC to do the actual signing (RSA or ECDSA)
 	int rv = sc_pkcs15_compute_signature(mToken.mScP15Card,
 					     mKey.signKey(), flags,
@@ -207,7 +209,10 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		// For ECDSA wrap the result of compute_signature() as ASN.1 SEQUENCE
 		unsigned char *seq;
 		size_t seqlen;
-		if (sc_asn1_sig_value_rs_to_sequence(mToken.mScCtx, outputData, sig_len, &seq, &seqlen))   {
+		if (sc_asn1_sig_value_rs_to_sequence(mToken.mScCtx,
+                                                     outputData, sig_len,
+                                                     &seq, &seqlen))
+                {
 			sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
 				"Failed to convert signature to ASN1 sequence format.\n");
 			free(outputData);
@@ -263,7 +268,8 @@ void OpenSCKeyHandle::decrypt(const Context &context,
 const CssmData &cipher, CssmData &clear)
 {
 	secdebug("crypto", "decrypt alg: %lu", (long unsigned int) context.algorithm());
-	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCKeyHandle::decrypt(ciphertext length = %d)\n", cipher.Length);
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+                 "In OpenSCKeyHandle::decrypt(ciphertext length = %d)\n", cipher.Length);
 	
 	if (context.type() != CSSM_ALGCLASS_ASYMMETRIC)
 		CssmError::throwMe(CSSMERR_CSP_INVALID_CONTEXT);
@@ -284,8 +290,8 @@ const CssmData &cipher, CssmData &clear)
 
 	// Determine padding
 	unsigned int flags = 0;
-	unsigned int padding = 0;
-	padding = context.getInt(CSSM_ATTRIBUTE_PADDING, CSSMERR_CSP_INVALID_ATTR_PADDING);
+	unsigned int padding = context.getInt(CSSM_ATTRIBUTE_PADDING,
+                                              CSSMERR_CSP_INVALID_ATTR_PADDING);
 	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "   got padding=%d 0x%X\n",
 		 padding, padding);
 	if (padding == CSSM_PADDING_PKCS1)
