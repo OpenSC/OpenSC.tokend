@@ -177,7 +177,7 @@ void OpenSCToken::verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
                        sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "Warning: the reader keypad is not used; PIN entered on keyboard.");
                }
         };
-	
+
 	if (mCurrentPIN != -1) {
 		pNumber = mCurrentPIN;
 		mCurrentPIN = -1;
