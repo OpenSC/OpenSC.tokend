@@ -205,6 +205,8 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
                 // For RSA just pass along the return of sc_pkcs15_compute_signature()
                 signature.Data = outputData;
                 signature.Length = rv;
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
+			"  Completed RSA signature, len=%d\n", rv);
         } else {
 		// For ECDSA wrap the result of compute_signature() as ASN.1 SEQUENCE
 		unsigned char *seq;
