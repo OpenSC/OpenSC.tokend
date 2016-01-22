@@ -283,12 +283,14 @@ const CssmData &cipher, CssmData &clear)
 	}
 
 	// @@@ Switch to using tokend allocators
+	unsigned char *outputData = NULL;
+	
 	// Allocation will be done later, as amount would differ,
 	// depending on whether it is RSA or ECDH
 
 	// Determine padding
 	unsigned int flags = 0;
-	uint32 int padding = context.getInt(CSSM_ATTRIBUTE_PADDING,
+	uint32 padding = context.getInt(CSSM_ATTRIBUTE_PADDING,
 					    CSSMERR_CSP_INVALID_ATTR_PADDING);
 	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "   got padding=%d 0x%X\n",
 		 padding, padding);
