@@ -157,6 +157,7 @@ void OpenSCToken::verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::verifyPIN(%d)\n", pinNum);
 	int pNumber = pinNum;
 
+
         // If the user entered no PIN in the (OS) provided prompt; pinLength is
         // zero; but *pin points to the empty string; rather than being NULL.
         //

@@ -282,12 +282,14 @@ const CssmData &cipher, CssmData &clear)
 		CssmError::throwMe(CSSMERR_CSP_INVALID_ALGORITHM);
 	}
 
-
+	// @@@ Switch to using tokend allocators
+	// Allocation will be done later, as amount would differ,
+	// depending on whether it is RSA or ECDH
 
 	// Determine padding
 	unsigned int flags = 0;
-	unsigned int padding = context.getInt(CSSM_ATTRIBUTE_PADDING,
-                                              CSSMERR_CSP_INVALID_ATTR_PADDING);
+	uint32 int padding = context.getInt(CSSM_ATTRIBUTE_PADDING,
+					    CSSMERR_CSP_INVALID_ATTR_PADDING);
 	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "   got padding=%d 0x%X\n",
 		 padding, padding);
 	if (padding == CSSM_PADDING_PKCS1)
@@ -296,22 +298,20 @@ const CssmData &cipher, CssmData &clear)
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
 			"   forced padding to SC_ALGORITHM_RSA_PAD_PKCS1\n");
 	}
-	
-	// @@@ Switch to using tokend allocators
-        unsigned char *outputData = NULL;
-	
+
 	// Call OpenSC to do the actual decryption
         int rv = -1; // return code
         unsigned long output_len = 0; // needed for ECDH
         
         if (context.algorithm() == CSSM_ALGID_RSA) {
                 // RSA decryption
+
                 outputData =
                 	reinterpret_cast<unsigned char *>(malloc(cipher.Length));
                 if (outputData == NULL)
                         CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
 		rv = sc_pkcs15_decipher(mToken.mScP15Card,
-			mKey.decryptKey(), SC_ALGORITHM_RSA_PAD_PKCS1,
+			mKey.decryptKey(), flags,
 			cipher.Data, cipher.Length, outputData, cipher.Length);
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
                          "  sc_pkcs15_decipher(): rv = %d\n", rv);
