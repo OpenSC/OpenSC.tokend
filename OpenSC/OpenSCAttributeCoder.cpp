@@ -72,11 +72,21 @@ Tokend::Record &record)
 		case kSecKeyKeySizeInBits:
 			if(keyObj->type & SC_PKCS15_TYPE_PRKEY) {
 				sc_pkcs15_prkey_info *prkey = (sc_pkcs15_prkey_info *)keyObj->data;
-				value = prkey->modulus_length;
+				//value = pubkey->modulus_length; // only for RSA tokens
+				if (keyObj->type == SC_PKCS15_TYPE_PRKEY_EC)
+					value = prkey->field_length; /* EC field length in bits */
+				else
+					value = prkey->modulus_length; /* RSA modulus length in bits */
+				// FIXME - need to address DSA keys too
 			}
 			else if(keyObj->type & SC_PKCS15_TYPE_PUBKEY) {
 				sc_pkcs15_pubkey_info *pubkey = (sc_pkcs15_pubkey_info *)keyObj->data;
-				value = pubkey->modulus_length;
+				//value = pubkey->modulus_length; // only for RSA tokens
+				if (keyObj->type == SC_PKCS15_TYPE_PRKEY_EC)
+					value = pubkey->field_length; /* EC field length in bits */
+				else
+					value = pubkey->modulus_length; /* RSA modulus length in bits */
+				// FIXME - need to address DSA keys too
 			}
 			else {
 				sc_debug(token_obj.mScCtx, SC_LOG_DEBUG_NORMAL, "Unknown keyObj type: %d\n", keyObj->type);
