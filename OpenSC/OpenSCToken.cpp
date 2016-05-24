@@ -329,6 +329,9 @@ SecTokendEstablishFlags flags, const char *cacheDirectory,
 const char *workDirectory, char mdsDirectory[PATH_MAX],
 char printName[PATH_MAX])
 {
+	bool useECC = false; // if we detect that this token has ECC keys, we create ECC-based schema
+			      // By default the created schema will be RSA
+	
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::establish() -> we had the highest score\n");
 
 	if (mScP15Card == NULL)
@@ -336,9 +339,35 @@ char printName[PATH_MAX])
 
 	Tokend::ISO7816Token::establish(guid, subserviceId, flags,
 		cacheDirectory, workDirectory, mdsDirectory, printName);
+	
+	// Locate certificates
+	int r, i, j;
+	const char *id;
+	struct sc_pkcs15_object *objs[32];
+
+#if 0 // need to figure out how to extract useful stuff from sc_pkcs15_cert_info
+      // until then, this part of code is useless...
+	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_CERT_X509, objs, 32);
+	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(TYPE_CERT_X509): %d\n", r);
+	if (r >= 0) {
+		for (i = 0; i < r; i++) {
+			struct sc_pkcs15_cert_info *cert_info = (struct sc_pkcs15_cert_info *) objs[i]->data;
+			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    - %s (ID=%s)\n", objs[i]->label, sc_pkcs15_print_id(&cert_info->id));
+			// extract information from the cert here: in particular, ALGID and CN
+		}
+	}
+#else // from PUBKEY at least I can learn whether it is ECC or RSA. That part works.
+	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_PUBKEY, objs, 32);
+	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(TYPE_PUBKEY): %d\n", r);
+	if (r >= 0) {
+		if (objs[0]->type == SC_PKCS15_TYPE_PUBKEY_EC) {
+			useECC = true;
+		} // and if not - the default (RSA) holds
+	}
+#endif
 
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  About to create schema\n");
-	mSchema = new OpenSCSchema();
+	mSchema = new OpenSCSchema(useECC);
 	mSchema->create();
 
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  Schema created, about to call populate()\n");

@@ -96,6 +96,7 @@ Tokend::Record &record)
 					value = pubkey->modulus_length; /* RSA modulus length in bits */
 				}
 				// FIXME - need to address DSA keys too
+			}
 			else {
 				sc_debug(token_obj.mScCtx, SC_LOG_DEBUG_NORMAL, "Unknown keyObj type: %d\n", keyObj->type);
 			}
