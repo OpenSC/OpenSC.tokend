@@ -77,7 +77,6 @@ Tokend::Record &record)
 				else
 					value = prkey->modulus_length; /* RSA modulus length in bits */
 				// FIXME - need to address DSA keys too
-
 			}
 			else if(keyObj->type & SC_PKCS15_TYPE_PUBKEY) {
 				sc_pkcs15_pubkey_info *pubkey = (sc_pkcs15_pubkey_info *)keyObj->data;
@@ -86,8 +85,17 @@ Tokend::Record &record)
 				else
 					value = pubkey->modulus_length; /* RSA modulus length in bits */
 				// FIXME - need to address DSA keys too
-
 			}
+			else if(keyObj->type & SC_PKCS15_TYPE_PUBKEY) {
+				sc_pkcs15_pubkey_info *pubkey = (sc_pkcs15_pubkey_info *)keyObj->data;
+				if (keyObj->type == SC_PKCS15_TYPE_PRKEY_EC) {
+				  sc_debug(token_obj.mScCtx, SC_LOG_DEBUG_NORMAL, "keyObj type EC (%d)\n", keyObj->type);
+					value = pubkey->field_length; /* EC field length in bits */
+				} else {
+				  sc_debug(token_obj.mScCtx, SC_LOG_DEBUG_NORMAL, "keyObj type RSA (%d)\n", keyObj->type);
+					value = pubkey->modulus_length; /* RSA modulus length in bits */
+				}
+				// FIXME - need to address DSA keys too
 			else {
 				sc_debug(token_obj.mScCtx, SC_LOG_DEBUG_NORMAL, "Unknown keyObj type: %d\n", keyObj->type);
 			}
