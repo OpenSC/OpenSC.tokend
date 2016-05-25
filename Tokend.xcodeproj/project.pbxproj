@@ -703,8 +703,15 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)";
 				ENABLE_TESTABILITY = YES;
+				"HEADER_SEARCH_PATHS[arch=*]" = /opt/local/include;
+				"LIBRARY_SEARCH_PATHS[arch=*]" = /opt/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_LDFLAGS[arch=*]" = (
+					"-L/opt/local/lib",
+					"-lssl",
+					"-lcrypto",
+				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 			};
 			name = Development;
@@ -715,7 +722,14 @@
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)";
+				"HEADER_SEARCH_PATHS[arch=*]" = /opt/local/include;
+				"LIBRARY_SEARCH_PATHS[arch=*]" = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				"OTHER_LDFLAGS[arch=*]" = (
+					"-L/opt/local/lib",
+					"-lssl",
+					"-lcrypto",
+				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 			};
 			name = Deployment;
