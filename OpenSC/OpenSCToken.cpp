@@ -323,7 +323,6 @@ char tokenUid[TOKEND_MAX_UID])
 	return score;
 }
 
-
 void OpenSCToken::establish(const CSSM_GUID *guid, uint32 subserviceId,
 SecTokendEstablishFlags flags, const char *cacheDirectory,
 const char *workDirectory, char mdsDirectory[PATH_MAX],
@@ -345,18 +344,21 @@ char printName[PATH_MAX])
 	const char *id;
 	struct sc_pkcs15_object *objs[32];
 
-#if 0 // need to figure out how to extract useful stuff from sc_pkcs15_cert_info
-      // until then, this part of code is useless...
+	// need to figure out how to extract useful stuff from sc_pkcs15_cert_info
+	// until then, this part of code is useless...
 	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_CERT_X509, objs, 32);
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(TYPE_CERT_X509): %d\n", r);
 	if (r >= 0) {
 		for (i = 0; i < r; i++) {
 			struct sc_pkcs15_cert_info *cert_info = (struct sc_pkcs15_cert_info *) objs[i]->data;
 			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    - %s (ID=%s)\n", objs[i]->label, sc_pkcs15_print_id(&cert_info->id));
-			// extract information from the cert here: in particular, ALGID and CN
+	
+			// do something with the cert here
+			
 		}
 	}
-#else // from PUBKEY at least I can learn whether it is ECC or RSA. That part works.
+	
+	// from PUBKEY at least I can learn whether it is ECC or RSA. That part works.
 	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_PUBKEY, objs, 32);
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(TYPE_PUBKEY): %d\n", r);
 	if (r >= 0) {
@@ -364,7 +366,7 @@ char printName[PATH_MAX])
 			useECC = true;
 		} // and if not - the default (RSA) holds
 	}
-#endif
+
 
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  About to create schema\n");
 	mSchema = new OpenSCSchema(useECC);
