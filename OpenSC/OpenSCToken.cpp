@@ -39,6 +39,26 @@
 #include <sstream>
 #include <iomanip>
 
+// OpenSSL stuff - and building without OpenSSL is not supported any more
+// So make sure ENABLE_OPENSSL is defined, or don't use tokens/smartcards
+#include <openssl/opensslv.h>
+#if OPENSSL_VERSION_NUMBER >= 0x10000000L
+#include <openssl/opensslconf.h>
+#endif
+#if OPENSSL_VERSION_NUMBER >= 0x00907000L
+#include <openssl/conf.h>
+#endif
+#include <openssl/evp.h>
+#include <openssl/x509.h>
+#include <openssl/rsa.h>
+#include <openssl/pem.h>
+#if OPENSSL_VERSION_NUMBER >= 0x00908000L
+#include <openssl/ec.h>
+#include <openssl/ecdsa.h>
+#endif
+#include <openssl/bn.h>
+#include <openssl/err.h>
+
 using CssmClient::AclFactory;
 
 OpenSCToken::OpenSCToken() : mLocked(false)
@@ -333,15 +353,13 @@ char printName[PATH_MAX])
 	
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::establish() -> we had the highest score\n");
 
+	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      printName we received: \"%s\"\n", printName);
+
 	if (mScP15Card == NULL)
 		PCSC::Error::throwMe(CSSM_ERRCODE_INTERNAL_ERROR);
 
-	Tokend::ISO7816Token::establish(guid, subserviceId, flags,
-		cacheDirectory, workDirectory, mdsDirectory, printName);
-	
 	// Locate certificates
-	int r, i, j;
-	const char *id;
+	int r=0, i=0, n=0;
 	struct sc_pkcs15_object *objs[32];
 
 	// need to figure out how to extract useful stuff from sc_pkcs15_cert_info
@@ -354,7 +372,43 @@ char printName[PATH_MAX])
 			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    - %s (ID=%s)\n", objs[i]->label, sc_pkcs15_print_id(&cert_info->id));
 	
 			// do something with the cert here
+			X509 *x = d2i_X509(NULL, (const u8 **)&cert_info->value.value, cert_info->value.len);
+			if (x == NULL) {
+				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      failed to parse ASN.1 X509 cert...\n");
+				continue;
+			}
+	
+			// prepare space for subject commonName
+			char subject[256];
+			size_t subject_len = 0;
+			memset(subject, 0, sizeof(subject));
 			
+			// start extracting subject - perhaps this piece is not needed at all?
+			n = i2d_X509_NAME(x->cert_info->subject, NULL);
+			if (n < 0) {
+				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      failed to DER-encode subject...(%d)\n", n);
+				continue;
+			}
+			if (n > sizeof(subject)-1) {
+				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      subject name too long...(%d)\n", n);
+				continue;
+			}
+
+			// Get X509_NAME construct
+			X509_NAME *x509_name = X509_get_subject_name(x); // must not be freed!
+
+			// Extract X509 commonName in ASCII form
+			memset(subject, 0, sizeof(subject));
+			subject_len = sizeof(subject);
+			n = X509_NAME_get_text_by_NID(x509_name, NID_commonName, subject, subject_len-1);
+			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      got commonName (%d bytes) \"%s\"\n", n, subject);
+			// And place that name where Tokend should pick it for display
+			strlcpy(printName, (const char *) subject, PATH_MAX);
+			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      printName: \"%s\"\n", printName);
+			
+			if (n > 0) break;
+			// We got our subject->commonName, no need to repeat the same
+			// for all the certificates on this token (one is enough)
 		}
 	}
 	
@@ -367,7 +421,10 @@ char printName[PATH_MAX])
 		} // and if not - the default (RSA) holds
 	}
 
-
+	Tokend::ISO7816Token::name(printName);
+	Tokend::ISO7816Token::establish(guid, subserviceId, flags,
+					cacheDirectory, workDirectory, mdsDirectory, printName);
+	
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  About to create schema\n");
 	mSchema = new OpenSCSchema(useECC);
 	mSchema->create();
