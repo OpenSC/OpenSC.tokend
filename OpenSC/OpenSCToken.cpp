@@ -361,8 +361,15 @@ char printName[PATH_MAX])
 	// Locate certificates
 	int r=0, i=0, n=0;
 	struct sc_pkcs15_object *objs[32];
-
-#if 0 // Something is wrong here. This code used to work fine, now I'm getting
+	char *subject = NULL;
+	X509 *x = NULL;
+	
+#define SET_PRINTNAME 1
+	
+	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_CERT_X509, objs, 32);
+	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(TYPE_CERT_X509): %d\n", r);
+	
+#if defined(SET_PRINTNAME) // Something is wrong here. This code used to work fine, now I'm getting
       // tons of the following errors:
       // 0x7fff74b1a000 14:36:56.268 [tokend] /Users/ur20980/Src/OpenSC-0.16.0/OpenSC.tokend/OpenSC/OpenSCRecord.cpp:68:getDataAttribute: OpenSCCertificateRecord::getDataAttribute(): sc_pkcs15_read_certificate(): -1401
       // 0x7fff74b1a000 14:36:56.269 [tokend] pkcs15-cert.c:176:sc_pkcs15_read_certificate: called
@@ -373,52 +380,53 @@ char printName[PATH_MAX])
 	
 	// need to figure out how to extract useful stuff from sc_pkcs15_cert_info
 	// until then, this part of code is useless...
-	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_CERT_X509, objs, 32);
-	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(TYPE_CERT_X509): %d\n", r);
-	if (r >= 0) {
-		for (i = 0; i < r; i++) {
-			struct sc_pkcs15_cert_info *cert_info = (struct sc_pkcs15_cert_info *) objs[i]->data;
-			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    - %s (ID=%s)\n", objs[i]->label, sc_pkcs15_print_id(&cert_info->id));
-	
-			// do something with the cert here
-			X509 *x = d2i_X509(NULL, (const u8 **)&cert_info->value.value, cert_info->value.len);
+
+	if (r > 0) { // we got some certs, or there were no certs on this token
+		for (i = 0; i < 1; i++) {
+			const struct sc_pkcs15_cert_info *cert_info = (const struct sc_pkcs15_cert_info *) objs[i]->data;
+			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    - %s (ID=%s)\n", objs[i]->label,
+				 sc_pkcs15_print_id(&cert_info->id));
+			
+#if 0
+			// convert this cert from DER to internal representation (structure)
+			x = d2i_X509(NULL, (const u8 **)&cert_info->value.value, cert_info->value.len);
 			if (x == NULL) {
 				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      failed to parse ASN.1 X509 cert...\n");
 				continue;
 			}
-	
-			// prepare space for subject commonName
-			char subject[256];
-			size_t subject_len = 0;
-			memset(subject, 0, sizeof(subject));
-			
-			// start extracting subject - perhaps this piece is not needed at all?
-			n = i2d_X509_NAME(x->cert_info->subject, NULL);
-			if (n < 0) {
-				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      failed to DER-encode subject...(%d)\n", n);
-				continue;
-			}
-			if (n > sizeof(subject)-1) {
-				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      subject name too long...(%d)\n", n);
-				continue;
-			}
 
-			// Get X509_NAME construct
-			X509_NAME *x509_name = X509_get_subject_name(x); // must not be freed!
+			// Get X509_NAME construct pointer (internal structure - must not be freed!)
+			X509_NAME *x509_name = X509_get_subject_name(x);
+
+			// Determine how long the commonName is
+			n = X509_NAME_get_text_by_NID(x509_name, NID_commonName, NULL, 0);
+			if (n <= 0) {
+				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      failed to determine commonName length\n");
+				continue;
+			}
+			
 
 			// Extract X509 commonName in ASCII form
-			memset(subject, 0, sizeof(subject));
-			subject_len = sizeof(subject);
-			n = X509_NAME_get_text_by_NID(x509_name, NID_commonName, subject, subject_len-1);
-			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      got commonName (%d bytes) \"%s\"\n", n, subject);
+			subject = (char *) malloc(n + 2);
+			if (subject == NULL) goto end;
+			memset(subject, 0, n + 2);
+
+			n = X509_NAME_get_text_by_NID (x509_name, NID_commonName, subject, n+1);
+			
 			// And place that name where Tokend should pick it for display
 			strlcpy(printName, (const char *) subject, PATH_MAX);
-			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      printName: \"%s\"\n", printName);
+
+			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      printName (%d bytes): \"%s\"\n", n, printName);
+#endif
 			
-			if (n > 0) break;
 			// We got our subject->commonName, no need to repeat the same
 			// for all the certificates on this token (one is enough)
-		}
+		end:
+			if (subject != NULL) {
+				free(subject); subject = NULL;
+			}
+			OPENSSL_free(x); x = NULL;		}
+	
 	}
 	
 #endif // attempt to set display name for this token to something nicer than "PIV_II"
@@ -426,13 +434,13 @@ char printName[PATH_MAX])
 	// from PUBKEY at least I can learn whether it is ECC or RSA. That part works.
 	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_PUBKEY, objs, 32);
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(TYPE_PUBKEY): %d\n", r);
-	if (r >= 0) {
+	if (r > 0) {
 		if (objs[0]->type == SC_PKCS15_TYPE_PUBKEY_EC) {
 			useECC = true;
 		} // and if not - the default (RSA) holds
 	}
 
-	Tokend::ISO7816Token::name(printName);
+	//Tokend::ISO7816Token::name(printName);
 	Tokend::ISO7816Token::establish(guid, subserviceId, flags,
 					cacheDirectory, workDirectory, mdsDirectory, printName);
 	
@@ -444,11 +452,22 @@ char printName[PATH_MAX])
 
 	populate();
 
+#if defined(SET_PRINTNAME)
+	if (printName[0] != 0x0) {
+		char *newName = (char *)malloc(PATH_MAX);
+		memset(newName, 0, PATH_MAX);
+		::strlcpy(newName, printName, PATH_MAX);
+		free(mScP15Card->tokeninfo->label);
+		mScP15Card->tokeninfo->label = newName;
+	}
+#else
 	if (mScP15Card->tokeninfo->label)
 		strcpy(printName, mScP15Card->tokeninfo->label);
+#endif
 	else
 		strcpy(printName,"OpenSC Token");
-
+	
+	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  OpenSCToken::establish() final printName: %s\n", printName);
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  returning from OpenSCToken::establish()\n");
 }
 
