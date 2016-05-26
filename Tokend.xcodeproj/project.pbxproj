@@ -713,6 +713,7 @@
 					"-lcrypto",
 				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
+				"USER_HEADER_SEARCH_PATHS[arch=*]" = /opt/local/include;
 			};
 			name = Development;
 		};
@@ -723,7 +724,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)";
 				"HEADER_SEARCH_PATHS[arch=*]" = /opt/local/include;
-				"LIBRARY_SEARCH_PATHS[arch=*]" = "";
+				"LIBRARY_SEARCH_PATHS[arch=*]" = /opt/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-L/opt/local/lib",
@@ -731,6 +732,7 @@
 					"-lcrypto",
 				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
+				"USER_HEADER_SEARCH_PATHS[arch=*]" = /opt/local/include;
 			};
 			name = Deployment;
 		};
