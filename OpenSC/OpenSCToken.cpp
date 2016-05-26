@@ -362,6 +362,15 @@ char printName[PATH_MAX])
 	int r=0, i=0, n=0;
 	struct sc_pkcs15_object *objs[32];
 
+#if 0 // Something is wrong here. This code used to work fine, now I'm getting
+      // tons of the following errors:
+      // 0x7fff74b1a000 14:36:56.268 [tokend] /Users/ur20980/Src/OpenSC-0.16.0/OpenSC.tokend/OpenSC/OpenSCRecord.cpp:68:getDataAttribute: OpenSCCertificateRecord::getDataAttribute(): sc_pkcs15_read_certificate(): -1401
+      // 0x7fff74b1a000 14:36:56.269 [tokend] pkcs15-cert.c:176:sc_pkcs15_read_certificate: called
+      // 0x7fff74b1a000 14:36:56.269 [tokend] pkcs15-cert.c:99:parse_x509_cert: X.509 certificate not found: -1401 (Invalid ASN.1 object)
+      // 0x7fff74b1a000 14:36:56.269 [tokend] pkcs15-cert.c:198:sc_pkcs15_read_certificate: returning with: -1401 (Invalid ASN.1 object)
+      // Until this is taken care of, just disable the code that extracts Subject->commonName,
+      // especially since Keychain Access did not display that name no matter what I did.
+	
 	// need to figure out how to extract useful stuff from sc_pkcs15_cert_info
 	// until then, this part of code is useless...
 	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_CERT_X509, objs, 32);
@@ -411,6 +420,8 @@ char printName[PATH_MAX])
 			// for all the certificates on this token (one is enough)
 		}
 	}
+	
+#endif // attempt to set display name for this token to something nicer than "PIV_II"
 	
 	// from PUBKEY at least I can learn whether it is ECC or RSA. That part works.
 	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_PUBKEY, objs, 32);
