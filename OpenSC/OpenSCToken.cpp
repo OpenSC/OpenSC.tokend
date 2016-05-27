@@ -358,21 +358,21 @@ char printName[PATH_MAX])
 	if (mScP15Card == NULL)
 		PCSC::Error::throwMe(CSSM_ERRCODE_INTERNAL_ERROR);
 
-	// Locate certificates
-	int r=0, i=0, n=0;
-	struct sc_pkcs15_object *objs[32];
-	char *subject = NULL;
-	X509 *x = NULL;
+        int r=0, i=0, n=0;
+        struct sc_pkcs15_object *objs[32]; // space/placeholder for certs and pubkeys
+        char *subject = NULL; // pointer to (future) Subject->DN. CN is a part of it
+        X509 *x = NULL;  // structure to hold decoded certificate (from DER to here :)
         X509_NAME *x509_name = NULL;
         u8 *cert_der = NULL, *cert_der2 = NULL;
         size_t cert_der_len = 0;
 	
-        // Get certificates from the token to retrieve Subject->commonName
-        // We want the token to be displayed by Keychain Access and such as "commonName" rather
-        // than "PIV_II" or "OpenSC Token"
+        // Get certificates from the token to retrieve Subject->commonName, as we
+        // want the token to be displayed by Keychain Access and such as "commonName"
+        // rather than "PIV_II" or "OpenSC Token"
         r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_CERT_X509, objs, 32);
         sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(TYPE_CERT_X509): %d\n", r);
-	if (r > 0) { // we got some certs, or there were no certs on this token
+        
+	if (r > 0) { // we got some certs
                 for (i = 0; i < r; i++) {
                         const struct sc_pkcs15_cert_info *cert_info = (const struct sc_pkcs15_cert_info *) objs[i]->data;
                         sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    - %s (ID=%s)\n", objs[i]->label,
@@ -381,20 +381,20 @@ char printName[PATH_MAX])
                         // Allocate placeholder for a copy (a clone) of this cert
                         cert_der_len = cert_info->value.len;
                         cert_der = (u8 *) malloc(cert_der_len);
-                        if (cert_der == NULL) {
+                        if (cert_der == NULL) { // failed to allocate memory for ASN.1 copy of cert
                                 sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    unable to allocate mem for cert_der...\n");
-                                goto end; // if failed to allocate memory for ASN.1 copy of cert
-                                          // And fill the placeholder with the body of the certificate
+                                goto end;
+                                
                         }
-                        cert_der2 = cert_der; // for subsequent freeing
+                        cert_der2 = cert_der; // save pointer for subsequent freeing
+                        // Fill the placeholder with the body of the certificate
                         memcpy (cert_der, cert_info->value.value, cert_der_len);
+                        
                         n = 0; // to mark that we haven't retrieved the commonName yet
                         
-                        // convert this cert from DER to internal representation (structure)
-                        // We want to emulate this code:
-                        //x = d2i_X509(NULL, (const u8 **)&cert_info->value.value, cert_info->value.len);
+                        // Convert this cert from DER to internal representation (structure)
                         x = d2i_X509(NULL, (const u8 **)&cert_der, cert_der_len);
-                        free(cert_der2); cert_der = cert_der2 = NULL; // avoiding potential memory leak
+                        free(cert_der2); cert_der = cert_der2 = NULL; // free on the spot to avoid potential memory leak
                         
                         if (x == NULL) {
                                 sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      failed to parse ASN.1 X509 cert...\n");
@@ -404,13 +404,13 @@ char printName[PATH_MAX])
                         // Get X509_NAME construct pointer (internal structure - must not be freed!)
                         x509_name = X509_get_subject_name(x);
                         
-                        // Determine how long the commonName is
+                        // Determine how long commonName is
                         n = X509_NAME_get_text_by_NID(x509_name, NID_commonName, NULL, 0);
                         if (n <= 0) {
-                                sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      failed to determine commonName length\n");
+                                sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      failed to get good commonName length (%d)\n", n);
                                 goto end;
                         } else {
-                                n = 0;
+                                n = 0; // we don't need it really, as our allocations are based on PATH_MAX
                         }
                         
                         
@@ -426,8 +426,6 @@ char printName[PATH_MAX])
                         
                         sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "      printName (%d bytes): \"%s\"\n", n, printName);
                         
-                        // We got our subject->commonName, no need to repeat the same
-                        // for all the certificates on this token (one is enough)
                 end:
                         if (subject != NULL) {
                                 free(subject); subject = NULL;
@@ -435,7 +433,9 @@ char printName[PATH_MAX])
                         if (x != NULL) {
                                 OPENSSL_free(x); x = NULL;
                         }
-
+                        
+                        // We got our subject->commonName, so no need to repeat the same
+                        // for all the certificates on this token (one is enough)
                         if (n > 0) // we got our printName
                                 break;
                 }
@@ -445,13 +445,13 @@ char printName[PATH_MAX])
 	// from PUBKEY I can learn whether it is ECC or RSA.
 	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_PUBKEY, objs, 32);
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(TYPE_PUBKEY): %d\n", r);
-	if (r > 0) {
+        
+        if (r > 0) { // token has public keys - let's base decision on the first one
 		if (objs[0]->type == SC_PKCS15_TYPE_PUBKEY_EC) {
 			useECC = true;
 		} // and if not - the default (RSA) holds
 	}
 
-	//Tokend::ISO7816Token::name(printName);
 	Tokend::ISO7816Token::establish(guid, subserviceId, flags,
 					cacheDirectory, workDirectory, mdsDirectory, printName);
 	
@@ -463,7 +463,7 @@ char printName[PATH_MAX])
 
 	populate();
 
-        if (printName[0] != 0x0) { // i.e. if
+        if (printName[0] != 0x0) { // i.e. if we succeeded filling it with something useful
 		char *newName = (char *)malloc(PATH_MAX);
 		memset(newName, 0, PATH_MAX);
 		::strlcpy(newName, printName, PATH_MAX);
