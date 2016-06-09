@@ -157,7 +157,13 @@ void OpenSCToken::verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::verifyPIN(%d)\n", pinNum);
 	int pNumber = pinNum;
 
-
+	// First try to ascertain what state the token is in. That somehow also
+	// nudges the token into a recognizable state...
+	int logged_in = 0;
+	int rc = sc_pkcs15_check_state(mScP15Card, &logged_in, 0);
+	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL,
+		 " sc_pkcs15_check_state() returned %d (logged_in=%d)", rc, logged_in);
+	
         // If the user entered no PIN in the (OS) provided prompt; pinLength is
         // zero; but *pin points to the empty string; rather than being NULL.
         //
