@@ -43,7 +43,7 @@ class OpenSCSchema;
 //
 // "The" token
 //
-class OpenSCToken : public Tokend::ISO7816Token
+class OpenSCToken : public Tokend::Token, public TokenContext
 {
 	NOCOPY(OpenSCToken)
 		public:

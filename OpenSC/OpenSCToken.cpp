@@ -371,7 +371,7 @@ void OpenSCToken::unverifyPIN(int pinNum)
 uint32 OpenSCToken::probe(SecTokendProbeFlags flags,
 char tokenUid[TOKEND_MAX_UID])
 {
-	uint32 score = Tokend::ISO7816Token::probe(flags, tokenUid);
+	uint32 score = 0;
 
 	// FIXME bool doDisconnect = true; /*!(flags & kSecTokendProbeKeepToken); */
 
@@ -553,9 +553,6 @@ char printName[PATH_MAX])
 		} // and if not - the default (RSA) holds
 	}
 
-	Tokend::ISO7816Token::establish(guid, subserviceId, flags,
-					cacheDirectory, workDirectory, mdsDirectory, printName);
-	
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  About to create schema\n");
 	mSchema = new OpenSCSchema(useECC);
 	mSchema->create();
