@@ -152,14 +152,14 @@ const unsigned char *newPin, size_t newPinLength )
 uint32_t OpenSCToken::pinStatus(int pinNum)
 {
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus for pinNum (%d)\n", pinNum);
-
+        
 	if (pinNum == mCurrentPIN && !isLocked()) {
 		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus Verified");
 		return 0x9000;
 	}
    	else {
 		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus blocked");
-		return 0x6300;
+                return 0x6300; // perhaps we should also pass to caller how many retries left
 	}
 }
 
@@ -167,8 +167,14 @@ uint32_t OpenSCToken::pinStatus(int pinNum)
 // does the token look as 'locked' for keychain ?
 bool OpenSCToken::isLocked()
 {
-	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::isLocked()\n");
-	return mLocked;
+	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::isLocked() mLocked=%d\n", mLocked);
+        // enforce token state verification ("nudge" the card)
+        int logged_in = 0;
+        int rc = sc_pkcs15_check_state(mScP15Card, &logged_in, 0);
+        sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL,
+                 " sc_pkcs15_check_state() returned %d (logged_in=%d)", rc, logged_in);
+        
+        return mLocked;
 }
 
 
