@@ -111,47 +111,16 @@ const unsigned char *newPin, size_t newPinLength)
 
 }
 
-
-bool OpenSCToken:: _changePIN( int pinNum,
-const unsigned char *oldPin, size_t oldPinLength,
-const unsigned char *newPin, size_t newPinLength )
-{
-	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::_changePIN(), PIN num is: %d\n", pinNum);
-
-	int r, i, rv;
-	struct sc_pkcs15_object *objs[32];
-
-	// pinNum -> AuthID
-	const sc_pkcs15_id_t *auth_id = getIdFromPinMap(pinNum);
-	if (auth_id == NULL) {
-		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  ERR: getIdFromPinMap(): no AuthID found for pinNum %d\n", pinNum);
-		CssmError::throwMe(CSSM_ERRCODE_INVALID_DATA);
-	}
-
-	// AuthID -> pin object  +  change pin
-	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_AUTH_PIN, objs, 32);
-	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(pin_id=%s): %d\n", sc_pkcs15_print_id(auth_id),  r);
-	if (r >= 0) {
-		for (i = 0; i < r; i++) {
-			sc_pkcs15_auth_info_t *auth_info = (sc_pkcs15_auth_info_t *) objs[i]->data;
-			if (sc_pkcs15_compare_id(auth_id, &auth_info->auth_id)) {
-
-				rv = sc_pkcs15_change_pin( mScP15Card, objs[i], oldPin, oldPinLength, newPin, newPinLength );
-				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  In OpenSCToken::sc_pkcs15_change_pin returned %d for pin %d\n", rv, pinNum );
-				if (rv==0)
-					return true;
-				else
-					return false;
-			}
-		}
-	}
-	return false;
-}
-
-
 uint32_t OpenSCToken::pinStatus(int pinNum)
 {
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus for pinNum (%d)\n", pinNum);
+        
+        // enforce token state verification ("nudge" the card)
+        int logged_in = 0;
+        int rc = sc_pkcs15_check_state(mScP15Card, &logged_in, 0);
+        sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL,
+                 " sc_pkcs15_check_state() returned %d (logged_in=%d)", rc, logged_in);
+        
         
 	if (pinNum == mCurrentPIN && !isLocked()) {
 		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus Verified");
@@ -167,12 +136,7 @@ uint32_t OpenSCToken::pinStatus(int pinNum)
 // does the token look as 'locked' for keychain ?
 bool OpenSCToken::isLocked()
 {
-	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::isLocked() mLocked=%d\n", mLocked);
-        // enforce token state verification ("nudge" the card)
-        int logged_in = 0;
-        int rc = sc_pkcs15_check_state(mScP15Card, &logged_in, 0);
-        sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL,
-                 " sc_pkcs15_check_state() returned %d (logged_in=%d)", rc, logged_in);
+	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::isLocked() mLocked=%b\n", mLocked);
         
         return mLocked;
 }
@@ -180,16 +144,18 @@ bool OpenSCToken::isLocked()
 
 void OpenSCToken::verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
 {
-	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::verifyPIN(%d)\n", pinNum);
-	int pNumber = pinNum;
+	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL,
+                 "In OpenSCToken::verifyPIN(%d) mCurrentPIN=%d\n", pinNum, mCurrentPIN);
+        int pNumber = (mCurrentPIN != -1)? mCurrentPIN : pinNum;
 
 	// First try to ascertain what state the token is in. That somehow also
-	// nudges the token into a recognizable state...
-	int logged_in = 0;
-	int rc = sc_pkcs15_check_state(mScP15Card, &logged_in, 0);
-	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL,
-		 " sc_pkcs15_check_state() returned %d (logged_in=%d)", rc, logged_in);
-	
+        // nudges the token into a recognizable state...
+        int logged_in = 0;
+        int rc = sc_pkcs15_check_state(mScP15Card, &logged_in, 0);
+        sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL,
+                 " sc_pkcs15_check_state() returned %d (logged_in=%d)", rc, logged_in);
+        
+        
         // If the user entered no PIN in the (OS) provided prompt; pinLength is
         // zero; but *pin points to the empty string; rather than being NULL.
         //
