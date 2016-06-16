@@ -173,7 +173,7 @@ uint32_t OpenSCToken::pinStatus(int pinNum)
 // does the token look as 'locked' for keychain ?
 bool OpenSCToken::isLocked()
 {
-	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::isLocked() mLocked=%b\n", mLocked);
+	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::isLocked() mLocked=%s\n", (mLocked?"true":"false"));
         
         return mLocked;
 }
