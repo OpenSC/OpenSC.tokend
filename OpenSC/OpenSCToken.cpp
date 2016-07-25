@@ -212,26 +212,34 @@ uint32_t OpenSCToken::pinStatus(int pinNum)
 					 rv, pinNum );
 				if (rv==0) {
 					struct sc_pkcs15_auth_info *pin_info = (struct sc_pkcs15_auth_info *) objs[i]->data;
+                                        sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL,
+                                                 "  In OpenSCToken::pinStatus() pin_info->logged_in = %d\n",
+                                                 pin_info->logged_in );
 					switch (pin_info->logged_in) {
 						case SC_PIN_STATE_LOGGED_IN:
 							sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus Verified");
+                                                        mLocked = false; // TODO: make sure it is OK (ulb)
 							return 0x9000;
 						case SC_PIN_STATE_LOGGED_OUT:
+                                                        unverifyPIN(-1); // push pin status
+                                                        sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus setting mLocked to true, called unverifyPIN()...");
 							sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus blocked");
 							return 0x6300;
 						default:
 							// SC_PIN_CMD_GET_INFO is not implemented
+                                                        sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus weird, pin_info->logged_in = %d", pin_info->logged_in);
 							break;
 					}
 					break;
 				} else
+                                        sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus weird, rv = %d", rv);
 					break;
 			}
 		}
 	}
  
 	// SC_PIN_CMD_GET_INFO yielded an error or is not implemented
-	// fall back to the old mechanism
+	// fall back to the old mechanism, which does not affect mLocked value
 	if (pinNum == mCurrentPIN && !isLocked()) {
 		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus Verified");
 		return 0x9000;
@@ -596,10 +604,11 @@ void OpenSCToken::getAcl(const char *tag, uint32 &count, AclEntryInfo *&acls)
 		uint32_t status = this->pinStatus(pin);
 		if (status == 0x9000)
 			acl.addPinState(pin, CSSM_ACL_PREAUTH_TRACKING_AUTHORIZED);
-		else
+                else {
 			/* FIXME add support for propagating the number of retries via
 			acl.addPinState(pin, 0, RETRIES); */
 			acl.addPinState(pin, CSSM_ACL_PREAUTH_TRACKING_UNKNOWN);
+                }
 		count = acl.size();
 		acls = acl.entries();
 		return;
