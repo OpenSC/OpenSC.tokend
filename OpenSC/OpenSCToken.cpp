@@ -269,7 +269,7 @@ void OpenSCToken::verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
 
 	// First try to ascertain what state the token is in. That somehow also
 	// nudges the token into a recognizable state...
-	int logged_in = 0, rc = 0;
+        //int logged_in = 0, rc = 0;
 	// Replace with sc_pkcs15_get_pin_info()
 	//rc = sc_pkcs15_check_state(mScP15Card, &logged_in, 0);
 	//sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL,
@@ -319,7 +319,7 @@ bool OpenSCToken::_verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
 {
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::_verifyPIN(), PIN num is: %d\n", pinNum);
 
-	int r, i, rv;
+	int r=0, i, rv=-1;
 	struct sc_pkcs15_object *objs[32];
 
 	// pinNum -> AuthID
