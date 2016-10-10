@@ -136,7 +136,7 @@ bool OpenSCToken:: _changePIN( int pinNum,
                         if (sc_pkcs15_compare_id(auth_id, &auth_info->auth_id)) {
                                 
                                 rv = sc_pkcs15_change_pin( mScP15Card, objs[i], oldPin, oldPinLength, newPin, newPinLength );
-                                sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  In OpenSCToken::sc_pkcs15_change_pin returned %d for pin %d\n", rv, pinNum );
+                                sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  In OpenSCToken::_changePIN() sc_pkcs15_change_pin() returned %d for pin %d\n", rv, pinNum );
                                 if (rv==0)
                                         return true;
                                 else
@@ -147,6 +147,7 @@ bool OpenSCToken:: _changePIN( int pinNum,
         return false;
 }
 
+#if 0
 bool OpenSCToken:: checkPIN( int pinNum )
 {
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::checkPIN(), PIN num is: %d\n", pinNum);
@@ -170,7 +171,7 @@ bool OpenSCToken:: checkPIN( int pinNum )
 			if (sc_pkcs15_compare_id(auth_id, &auth_info->auth_id)) {
 				
 				//rv = sc_pkcs15_change_pin( mScP15Card, objs[i], oldPin, oldPinLength, newPin, newPinLength );
-				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  In OpenSCToken::sc_pkcs15_change_pin returned %d for pin %d\n", rv, pinNum );
+				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  In OpenSCToken::checkPIN() sc_pkcs15_change_pin() returned %d for pin %d\n", rv, pinNum );
 				if (rv==0)
 					return true;
 				else
@@ -180,7 +181,7 @@ bool OpenSCToken:: checkPIN( int pinNum )
 	}
 	return false;
 }
-
+#endif /* commenting out checkPIN() */
 
 uint32_t OpenSCToken::pinStatus(int pinNum)
 {

@@ -76,8 +76,10 @@ class OpenSCToken : public Tokend::ISO7816Token
 			const unsigned char *oldPin, size_t oldPinLength,
 			const unsigned char *newPin, size_t newPinLength );
 	
+#if 0
 		bool checkPIN( int pinNum);
-
+#endif
+        
 		// To manipulate mPinMap
 		void addToPinMap(const sc_pkcs15_id_t *id);
 		int getRefFromPinMap(const sc_pkcs15_id_t *id);
