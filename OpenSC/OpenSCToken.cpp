@@ -164,7 +164,11 @@ void OpenSCToken::verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
         // detect this; and used it to trigger a read of the PIN on the
         // PIN pad (which requires both pin == NULL and pinLength == 0).
         //
-        if (mScP15Card->card->reader->capabilities & SC_READER_CAP_PIN_PAD) {
+        if (mScP15Card->card->reader->capabilities & SC_READER_CAP_PIN_PAD
+#ifdef SC_CARD_CAP_PROTECTED_AUTHENTICATION_PATH
+				|| mScP15Card->card->caps & SC_CARD_CAP_PROTECTED_AUTHENTICATION_PATH
+#endif
+				) {
                if (pinLength == 0) {
                        sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "Defer PIN entry to the reader keypad.");
                        pin = NULL;
