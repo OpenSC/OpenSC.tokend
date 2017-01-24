@@ -466,7 +466,6 @@ void OpenSCToken::populate()
 	KeyCountMap mKeys;
 	
 	// Locate certificates
-	//FIXME - max objects constant ?
 	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_CERT_X509, objs, 32);
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(TYPE_CERT_X509): %d\n", r);
 	if (r >= 0) {
@@ -484,8 +483,8 @@ void OpenSCToken::populate()
 	}
 
 	// Locate private keys
-	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_PRKEY_RSA, objs, 32);
-	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(TYPE_PRKEY_RSA): %d\n", r);
+	r = sc_pkcs15_get_objects(mScP15Card, SC_PKCS15_TYPE_PRKEY, objs, 32);
+	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  sc_pkcs15_get_objects(TYPE_PRKEY): %d\n", r);
 	if (r >= 0) {
 		
 		// Count the occurences of the private key ids

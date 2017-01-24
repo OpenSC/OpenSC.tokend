@@ -44,7 +44,7 @@ class OpenSCKeyRecord;
 class OpenSCKeyHandle: public Tokend::KeyHandle
 {
 	NOCOPY(OpenSCKeyHandle)
-		public:
+	public:
 		OpenSCKeyHandle(OpenSCToken &OpenSCToken,
 			const Tokend::MetaRecord &metaRecord, OpenSCKeyRecord &cacKey);
 		~OpenSCKeyHandle();
@@ -63,6 +63,12 @@ class OpenSCKeyHandle: public Tokend::KeyHandle
 		virtual void decrypt(const Context &context, const CssmData &cipher, CssmData &clear);
 
 		virtual void exportKey(const Context &context, const AccessCredentials *cred, CssmKey &wrappedKey);
+
+	protected:
+		virtual void generateRsaSignature(const Context &context,
+			CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature);
+		virtual void generateEcdsaSignature(const Context &context,
+			CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature);
 
 	private:
 		OpenSCToken &mToken;
