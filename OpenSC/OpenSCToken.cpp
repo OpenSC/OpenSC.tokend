@@ -169,7 +169,7 @@ void OpenSCToken::verifyPIN(int pinNum, const uint8_t *pin, size_t pinLength)
 				|| mScP15Card->card->caps & SC_CARD_CAP_PROTECTED_AUTHENTICATION_PATH
 #endif
 				) {
-               if (pinLength == 0) {
+               if (pinLength == 0 || (pinLength == 1 && pin[0] == '\0')) {
                        sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "Defer PIN entry to the reader keypad.");
                        pin = NULL;
                } else {
