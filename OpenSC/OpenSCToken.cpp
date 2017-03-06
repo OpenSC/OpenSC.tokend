@@ -224,7 +224,7 @@ uint32_t OpenSCToken::pinStatus(int pinNum)
 						case SC_PIN_STATE_LOGGED_OUT:
                                                         unverifyPIN(-1); // push pin status
                                                         sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus setting mLocked to true, called unverifyPIN()...");
-							sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus blocked");
+							sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus Logged out");
 							return 0x6300;
 						default:
 							// SC_PIN_CMD_GET_INFO is not implemented
@@ -246,7 +246,7 @@ uint32_t OpenSCToken::pinStatus(int pinNum)
 		return 0x9000;
 	}
 	else {
-		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus blocked");
+		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::pinStatus Logged out");
 		return 0x6300; // perhaps we should also pass to caller how many retries left
 	}
 }
@@ -258,7 +258,7 @@ bool OpenSCToken::isLocked()
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::isLocked() mLocked=%s\n",
 		 (mLocked? "true" : "false"));
         
-        return mLocked;
+    return mLocked;
 }
 
 
