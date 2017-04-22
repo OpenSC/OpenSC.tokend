@@ -52,7 +52,7 @@ OpenSCKeyHandle::~OpenSCKeyHandle()
 
 void OpenSCKeyHandle::getKeySize(CSSM_KEY_SIZE &keySize)
 {
-	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCKeyHandle::getKeySize()\n", keySize);
+	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCKeyHandle::getKeySize(%x)\n", keySize);
 	secdebug("crypto", "getKeySize");
 	CssmError::throwMe(CSSM_ERRCODE_FUNCTION_NOT_IMPLEMENTED);
 }
@@ -190,7 +190,7 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		CssmError::throwMe(CSSMERR_CSP_MEMORY_ERROR);
 
 	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
-		"  Signing buffers: inlen=%d, outlen=%d\n",input.Length, sig_len);
+		"  Signing buffers: inlen=%lu, outlen=%lu\n",input.Length, sig_len);
         
 	// Call OpenSC to do the actual signing (RSA or ECDSA)
 	int rv = sc_pkcs15_compute_signature(mToken.mScP15Card,
@@ -232,7 +232,7 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		memcpy(signature.Data, seq, seqlen);
 		free(seq);
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
-			"  Converted ECDSA signature to ASN.1 SEQUENCE: seqlen=%d\n",
+			"  Converted ECDSA signature to ASN.1 SEQUENCE: seqlen=%lu\n",
 			seqlen);
 	}
 }
@@ -275,7 +275,7 @@ const CssmData &cipher, CssmData &clear)
 {
 	secdebug("crypto", "decrypt alg: %lu", (long unsigned int) context.algorithm());
 	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
-                 "In OpenSCKeyHandle::decrypt(ciphertext length = %d)\n", cipher.Length);
+                 "In OpenSCKeyHandle::decrypt(ciphertext length = %lu)\n", cipher.Length);
 	
 	if (context.type() != CSSM_ALGCLASS_ASYMMETRIC)
 		CssmError::throwMe(CSSMERR_CSP_INVALID_CONTEXT);
@@ -337,7 +337,7 @@ const CssmData &cipher, CssmData &clear)
 	                        mKey.decryptKey(), SC_ALGORITHM_ECDH_CDH_RAW,
                                 cipher.Data, cipher.Length, NULL, &output_len);
                 sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
-                         "  sc_pkcs15_derive() told us to allocate %d bytes\n",
+                         "  sc_pkcs15_derive() told us to allocate %lu bytes\n",
                          output_len);
                 outputData =
 	                reinterpret_cast<unsigned char *>(malloc(output_len));
@@ -359,7 +359,7 @@ const CssmData &cipher, CssmData &clear)
         }
 
 	sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL,
-		 "  decrypt(): return code %d, with %d decrypted bytes\n",
+		 "  decrypt(): return code %d, with %lu decrypted bytes\n",
 		 rv, clear.Length);
 }
 
