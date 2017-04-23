@@ -723,33 +723,24 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				"HEADER_SEARCH_PATHS[arch=*]" = (
 					/opt/local/include,
-					/usr/local/include,
-					/usr/local/opt/openssl/include,
+					$PROJECT_DIR/../openssl_bin/Library/OpenSC/include,
 				);
 				"LIBRARY_SEARCH_PATHS[arch=*]" = (
 					/opt/local/lib,
-					/usr/local/lib,
-					/usr/local/opt/openssl/lib,
+					$PROJECT_DIR/../openssl_bin/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"-L/usr/local/lib",
-					"-L/usr/local/opt/openssl/lib",
-					"-L/opt/local/lib",
-					"-lssl",
-					"-lcrypto",
-				);
+				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=*]" = (
-					"-L/usr/local/lib",
-					"-L/usr/local/opt/openssl/lib",
 					"-L/opt/local/lib",
 					"-lssl",
 					"-lcrypto",
+					"${OPENSSL_LIB}",
 				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				SDKROOT = macosx;
-				"USER_HEADER_SEARCH_PATHS[arch=*]" = /opt/local/include;
+				"USER_HEADER_SEARCH_PATHS[arch=*]" = "/opt/local/include ${OPENSSL_INCLUDE}";
 			};
 			name = Development;
 		};
@@ -779,32 +770,28 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				"HEADER_SEARCH_PATHS[arch=*]" = (
 					/opt/local/include,
-					/usr/local/include,
-					/usr/local/opt/openssl/include,
+					$PROJECT_DIR/../openssl_bin/Library/OpenSC/include,
 				);
 				"LIBRARY_SEARCH_PATHS[arch=*]" = (
 					/opt/local/lib,
-					/usr/local/lib,
-					/usr/local/opt/openssl/lib,
+					$PROJECT_DIR/../openssl_bin/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
-					"-L/usr/local/lib",
-					"-L/usr/local/opt/openssl/lib",
 					"-L/opt/local/lib",
 					"-lssl",
 					"-lcrypto",
+					"${OPENSSL_LIB}",
 				);
 				"OTHER_LDFLAGS[arch=*]" = (
-					"-L/usr/local/lib",
-					"-L/usr/local/opt/openssl/lib",
 					"-L/opt/local/lib",
 					"-lssl",
 					"-lcrypto",
+					"${OPENSSL_LIB}",
 				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				SDKROOT = macosx;
-				"USER_HEADER_SEARCH_PATHS[arch=*]" = /opt/local/include;
+				"USER_HEADER_SEARCH_PATHS[arch=*]" = "/opt/local/include ${OPENSSL_INCLUDE}";
 			};
 			name = Deployment;
 		};
