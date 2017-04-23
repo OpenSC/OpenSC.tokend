@@ -725,11 +725,8 @@
 					/opt/local/include,
 					$PROJECT_DIR/../openssl_bin/Library/OpenSC/include,
 				);
-				"LIBRARY_SEARCH_PATHS[arch=*]" = (
-					/opt/local/lib,
-					$PROJECT_DIR/../openssl_bin/lib,
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				"LIBRARY_SEARCH_PATHS[arch=*]" = /opt/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=*]" = (
@@ -772,11 +769,8 @@
 					/opt/local/include,
 					$PROJECT_DIR/../openssl_bin/Library/OpenSC/include,
 				);
-				"LIBRARY_SEARCH_PATHS[arch=*]" = (
-					/opt/local/lib,
-					$PROJECT_DIR/../openssl_bin/lib,
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				"LIBRARY_SEARCH_PATHS[arch=*]" = /opt/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = (
 					"-L/opt/local/lib",
 					"-lssl",
