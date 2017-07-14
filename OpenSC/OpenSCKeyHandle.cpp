@@ -97,6 +97,24 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 		flags |= SC_ALGORITHM_RSA_HASH_SHA1;
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Using SHA1, length is 20\n");
 	}
+	else if (signOnly == CSSM_ALGID_SHA256) {
+		if (input.Length != 32)
+			CssmError::throwMe(CSSMERR_CSP_BLOCK_SIZE_MISMATCH);
+		flags |= SC_ALGORITHM_RSA_HASH_SHA256;
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Using SHA256, length is 32\n");
+	}
+	else if (signOnly == CSSM_ALGID_SHA384) {
+		if (input.Length != 48)
+			CssmError::throwMe(CSSMERR_CSP_BLOCK_SIZE_MISMATCH);
+		flags |= SC_ALGORITHM_RSA_HASH_SHA384;
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Using SHA384, length is 48\n");
+	}
+	else if (signOnly == CSSM_ALGID_SHA512) {
+		if (input.Length != 64)
+			CssmError::throwMe(CSSMERR_CSP_BLOCK_SIZE_MISMATCH);
+		flags |= SC_ALGORITHM_RSA_HASH_SHA512;
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Using SHA512, length is 64\n");
+	}
 	else if (signOnly == CSSM_ALGID_MD5) {
 		if (input.Length != 16)
 			CssmError::throwMe(CSSMERR_CSP_BLOCK_SIZE_MISMATCH);
