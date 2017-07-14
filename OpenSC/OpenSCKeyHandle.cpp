@@ -96,17 +96,10 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 	}
 
 	if (signOnly == CSSM_ALGID_SHA1) {
-
 		if (input.Length != 20)
 			CssmError::throwMe(CSSMERR_CSP_BLOCK_SIZE_MISMATCH);
 		flags |= SC_ALGORITHM_RSA_HASH_SHA1;
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Using SHA1, length is 20 bytes\n");
-	}
-	else if (signOnly == CSSM_ALGID_MD5) {
-		if (input.Length != 16)
-			CssmError::throwMe(CSSMERR_CSP_BLOCK_SIZE_MISMATCH);
-		flags |= SC_ALGORITHM_RSA_HASH_MD5;
-		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Using MD5, length is 16 bytes\n");
 	}
    	else if (signOnly == CSSM_ALGID_SHA256) {
 		if (input.Length != 32)
@@ -125,6 +118,12 @@ CSSM_ALGORITHMS signOnly, const CssmData &input, CssmData &signature)
 			CssmError::throwMe(CSSMERR_CSP_BLOCK_SIZE_MISMATCH);
 		flags |= SC_ALGORITHM_RSA_HASH_SHA512;
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Using SHA512, length is 64 bytes\n");
+	}
+	else if (signOnly == CSSM_ALGID_MD5) {
+		if (input.Length != 16)
+			CssmError::throwMe(CSSMERR_CSP_BLOCK_SIZE_MISMATCH);
+		flags |= SC_ALGORITHM_RSA_HASH_MD5;
+		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  Using MD5, length is 16 bytes\n");
 	}
 	else if (signOnly == CSSM_ALGID_NONE) {
 		sc_debug(mToken.mScCtx, SC_LOG_DEBUG_NORMAL, "  NO digest (perhaps for SSL authentication)\n");
