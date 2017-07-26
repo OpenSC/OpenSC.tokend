@@ -452,6 +452,15 @@ void OpenSCToken::populate()
 {
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::populate()\n");
 
+	scconf_block *conf_block = NULL;
+	conf_block = sc_get_conf_block(mScCtx, "framework", "tokend", 1);
+	int ignore_private_certificate = 1;
+	if (conf_block != NULL) {
+		// if true, ignore to read PIN protected certificate
+		ignore_private_certificate = scconf_get_bool(conf_block, "ignore_private_certificate", ignore_private_certificate);
+		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  Get ignore_private_certificate from config file: %s\n", ignore_private_certificate?"TRUE":"FALSE");
+	}
+
 	// We work with certificates and private keys only
 	Tokend::Relation &certRelation = mSchema->findRelation(CSSM_DL_DB_RECORD_X509_CERTIFICATE);
 	Tokend::Relation &privateKeyRelation = mSchema->findRelation(CSSM_DL_DB_RECORD_PRIVATE_KEY);
@@ -477,6 +486,10 @@ void OpenSCToken::populate()
 	if (r >= 0) {
 		for (i = 0; i < r; i++) {
 			struct sc_pkcs15_cert_info *cert_info = (struct sc_pkcs15_cert_info *) objs[i]->data;
+			if ((objs[i]->flags & SC_PKCS15_CO_FLAG_PRIVATE) && ignore_private_certificate) {
+				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    - %s (ID=%s) ignore PIN protected certificate\n", objs[i]->label, sc_pkcs15_print_id(&cert_info->id));
+				continue;
+			}
 			//  get the actual record
 			RefPointer<Tokend::Record> record(new OpenSCCertificateRecord(this, objs[i]));
 			// put it into certificates map
@@ -529,10 +542,6 @@ void OpenSCToken::populate()
 			} else
 				continue;
 			
-			// put it into prkey map
-			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    - %s (ID=%s)\n", objs[i]->label, sc_pkcs15_print_id(&prkey_info->id));
-			privateKeyRelation.insertRecord(record);
-
 			// do the bind between the key and a cert
 			IdRecordMap::const_iterator it;
 			for (it = mCertificates.begin(); it != mCertificates.end(); it++) {
@@ -540,8 +549,11 @@ void OpenSCToken::populate()
 					break;
 			}
 			if (it == mCertificates.end())
-				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "        no certificate found for this key\n");
+				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    - %s (ID=%s) no certificate found for this key\n", objs[i]->label, sc_pkcs15_print_id(&prkey_info->id));
 			else {
+				// put it into prkey map
+				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    - %s (ID=%s)\n", objs[i]->label, sc_pkcs15_print_id(&prkey_info->id));
+				privateKeyRelation.insertRecord(record);
 				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "        linked this key to cert \"%s\"\n", it->second->description());
 				record->setAdornment(mSchema->publicKeyHashCoder().certificateKey(),
 					new Tokend::LinkedRecordAdornment(it->second));
