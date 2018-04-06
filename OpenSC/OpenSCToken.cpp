@@ -365,9 +365,11 @@ void OpenSCToken::unverifyPIN(int pinNum)
 	mCurrentPIN = pinNum;
 	mLocked = true;
 
-  int rv = sc_reset(mScCard, 0); // 0 = warm reset, 1 = cold reset (unpower)
-  if (rv != SC_SUCCESS)
-    sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::unverifyPIN(%d) reset returned %d\n", pinNum, rv);
+	int rv = SC_SUCCESS;
+	//rv =  sc_reset(mScCard, 0); // 0 = warm reset, 1 = cold reset (unpower)
+	if (rv != SC_SUCCESS)
+		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, 
+			"In OpenSCToken::unverifyPIN(%d) reset returned %d\n", pinNum, rv);
 
 }
 
