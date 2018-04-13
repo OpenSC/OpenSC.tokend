@@ -370,7 +370,8 @@ void OpenSCToken::unverifyPIN(int pinNum)
 	sc_pkcs15_pincache_clear(mScP15Card);
 	if (sc_logout(mScCard) != SC_SUCCESS) {
 		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "sc_logout() did not return SC_SUCCESS");
-		//rv = sc_reset(mScCard, 1); // 0 = warm reset, 1 = cold reset (unpower)
+		// Somehow doing sc_reset() here makes the token unusable until re-inserted
+		//rv = sc_reset(mScCard, 0); // 0 = warm reset, 1 = cold reset (unpower)
 		if (rv != SC_SUCCESS)
 			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, 
 				"In OpenSCToken::unverifyPIN(%d) sc_reset returned %d\n",
