@@ -359,17 +359,23 @@ void OpenSCToken::unverifyPIN(int pinNum)
 {
 	sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "In OpenSCToken::unverifyPIN(%d)\n", pinNum);
 
-	if (pinNum != -1)
-		CssmError::throwMe(CSSM_ERRCODE_SAMPLE_VALUE_NOT_SUPPORTED);
+	//if (pinNum != -1)
+	//	CssmError::throwMe(CSSM_ERRCODE_SAMPLE_VALUE_NOT_SUPPORTED);
 
-	mCurrentPIN = pinNum;
+	//mCurrentPIN = pinNum;
 	mLocked = true;
-
+	
 	int rv = SC_SUCCESS;
-	rv =  sc_reset(mScCard, 1); // 0 = warm reset, 1 = cold reset (unpower)
-	if (rv != SC_SUCCESS)
-		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, 
-			"In OpenSCToken::unverifyPIN(%d) sc_reset returned %d\n", pinNum, rv);
+
+	sc_pkcs15_pincache_clear(mScP15Card);
+	if (sc_logout(mScCard) != SC_SUCCESS) {
+		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "sc_logout() did not return SC_SUCCESS");
+		//rv = sc_reset(mScCard, 1); // 0 = warm reset, 1 = cold reset (unpower)
+		if (rv != SC_SUCCESS)
+			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, 
+				"In OpenSCToken::unverifyPIN(%d) sc_reset returned %d\n",
+				pinNum, rv);
+	}
 
 }
 
