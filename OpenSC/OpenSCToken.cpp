@@ -362,22 +362,22 @@ void OpenSCToken::unverifyPIN(int pinNum)
 	//if (pinNum != -1)
 	//	CssmError::throwMe(CSSM_ERRCODE_SAMPLE_VALUE_NOT_SUPPORTED);
 
-	//mCurrentPIN = pinNum;
+	mCurrentPIN = pinNum;
 	mLocked = true;
-	
-	int rv = SC_SUCCESS;
-
 	sc_pkcs15_pincache_clear(mScP15Card);
-	if (sc_logout(mScCard) != SC_SUCCESS) {
-		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "sc_logout() did not return SC_SUCCESS");
+	
+	/* Does not seem to work as I'd like */
+	int rv = SC_SUCCESS;
+	rv = sc_logout(mScCard);
+	if (rv != SC_SUCCESS) {
+		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "sc_logout() returned %d (not SC_SUCCESS)", rv);
 		// Somehow doing sc_reset() here makes the token unusable until re-inserted
-		//rv = sc_reset(mScCard, 0); // 0 = warm reset, 1 = cold reset (unpower)
+		rv = sc_reset(mScCard, 0); // 0 = warm reset, 1 = cold reset (unpower)
 		if (rv != SC_SUCCESS)
 			sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, 
-				"In OpenSCToken::unverifyPIN(%d) sc_reset returned %d\n",
+				"In OpenSCToken::unverifyPIN(%d) sc_reset returned %d (not SC_SUCCESS)\n",
 				pinNum, rv);
 	}
-
 }
 
 
