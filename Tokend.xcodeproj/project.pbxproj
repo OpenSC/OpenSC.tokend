@@ -739,7 +739,7 @@
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-L/opt/local/lib",
 					"-lcrypto",
-					"${OPENSSL_LIB}",
+					"${OPENSSL_LIBS}",
 				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				SDKROOT = macosx;
@@ -788,12 +788,12 @@
 				OTHER_LDFLAGS = (
 					"-L/opt/local/lib",
 					"-lcrypto",
-					"${OPENSSL_LIB}",
+					"${OPENSSL_LIBS}",
 				);
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-L/opt/local/lib",
 					"-lcrypto",
-					"${OPENSSL_LIB}",
+					"${OPENSSL_LIBS}",
 				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				SDKROOT = macosx;
