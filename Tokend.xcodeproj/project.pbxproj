@@ -738,7 +738,6 @@
 				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-L/opt/local/lib",
-					"-lssl",
 					"-lcrypto",
 					"${OPENSSL_LIB}",
 				);
@@ -788,13 +787,11 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = (
 					"-L/opt/local/lib",
-					"-lssl",
 					"-lcrypto",
 					"${OPENSSL_LIB}",
 				);
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-L/opt/local/lib",
-					"-lssl",
 					"-lcrypto",
 					"${OPENSSL_LIB}",
 				);
