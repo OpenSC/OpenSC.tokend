@@ -844,6 +844,8 @@ void Token::authenticate(CSSM_DB_ACCESS_TYPE mode,
 	int pinNum = pinFromAclTag(cred->EntryTag);
 	if (!pinNum || !cred)
 		pinNum = -1; // No PIN in tag.
+        
+        secdebug("in Token::authenticate", "pinNum=%d", pinNum);
 
 	if (mode == CSSM_DB_ACCESS_RESET)
 	{

@@ -29,7 +29,7 @@
 #ifndef _OpenSCTOKEN_H_
 #define _OpenSCTOKEN_H_
 
-#include <Token.h>
+#include "Token.h"
 #include "TokenContext.h"
 
 #include "libopensc/opensc.h"
@@ -75,7 +75,11 @@ class OpenSCToken : public Tokend::ISO7816Token
 		bool _changePIN( int pinNum,
 			const unsigned char *oldPin, size_t oldPinLength,
 			const unsigned char *newPin, size_t newPinLength );
-
+	
+#if 0
+		bool checkPIN( int pinNum);
+#endif
+        
 		// To manipulate mPinMap
 		void addToPinMap(const sc_pkcs15_id_t *id);
 		int getRefFromPinMap(const sc_pkcs15_id_t *id);

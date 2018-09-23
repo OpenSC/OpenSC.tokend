@@ -52,7 +52,7 @@ class OpenSCSchema : public Tokend::Schema
 {
 	NOCOPY(OpenSCSchema)
 		public:
-		OpenSCSchema();
+		OpenSCSchema(bool use_ecc = false);
 		virtual ~OpenSCSchema();
 
 		virtual void create();

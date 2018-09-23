@@ -42,8 +42,8 @@
 
 using namespace Tokend;
 
-OpenSCSchema::OpenSCSchema() :
-mKeyAlgorithmCoder(uint32(CSSM_ALGID_RSA)),
+OpenSCSchema::OpenSCSchema(bool use_ecc) :
+mKeyAlgorithmCoder(uint32((use_ecc)?CSSM_ALGID_ECC:CSSM_ALGID_RSA)),
 mKeyAttributeCoder()
 {
 }
