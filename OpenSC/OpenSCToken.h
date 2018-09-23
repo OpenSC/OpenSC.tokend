@@ -29,7 +29,7 @@
 #ifndef _OpenSCTOKEN_H_
 #define _OpenSCTOKEN_H_
 
-#include <Token.h>
+#include "Token.h"
 #include "TokenContext.h"
 
 #include "libopensc/opensc.h"
