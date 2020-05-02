@@ -759,7 +759,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
-				SDKROOT = macosx10.10;
 			};
 			name = Development;
 		};
@@ -799,7 +798,6 @@
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
-				SDKROOT = macosx10.10;
 			};
 			name = Deployment;
 		};
