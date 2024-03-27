@@ -454,11 +454,15 @@ void OpenSCToken::populate()
 
 	scconf_block *conf_block = NULL;
 	conf_block = sc_get_conf_block(mScCtx, "framework", "tokend", 1);
-	int ignore_private_certificate = 1;
+	int ignore_pin_protected_certificate = 1, ignore_private_certificate = 1;
 	if (conf_block != NULL) {
 		// if true, ignore to read PIN protected certificate
+		ignore_pin_protected_certificate = scconf_get_bool(conf_block, "ignore_pin_protected_certificate", ignore_pin_protected_certificate);
+		/* keep old option to preserve backward compatibility */
 		ignore_private_certificate = scconf_get_bool(conf_block, "ignore_private_certificate", ignore_private_certificate);
-		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  Get ignore_private_certificate from config file: %s\n", ignore_private_certificate?"TRUE":"FALSE");
+		if (ignore_private_certificate == 0)
+			ignore_pin_protected_certificate = 0;
+		sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "  Get ignore_pin_protected_certificate from config file: %s\n", ignore_pin_protected_certificate ? "TRUE" : "FALSE");
 	}
 
 	// We work with certificates and private keys only
@@ -486,7 +490,7 @@ void OpenSCToken::populate()
 	if (r >= 0) {
 		for (i = 0; i < r; i++) {
 			struct sc_pkcs15_cert_info *cert_info = (struct sc_pkcs15_cert_info *) objs[i]->data;
-			if ((objs[i]->flags & SC_PKCS15_CO_FLAG_PRIVATE) && ignore_private_certificate) {
+			if ((objs[i]->flags & SC_PKCS15_CO_FLAG_PRIVATE) && ignore_pin_protected_certificate) {
 				sc_debug(mScCtx, SC_LOG_DEBUG_NORMAL, "    - %s (ID=%s) ignore PIN protected certificate\n", objs[i]->label, sc_pkcs15_print_id(&cert_info->id));
 				continue;
 			}
